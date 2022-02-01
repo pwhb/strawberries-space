@@ -1,0 +1,20 @@
+{
+    "rent": {
+        "purpose": "RENT A HOME",
+        "title": "Find & Rent \n Your New Home",
+        "desc": "Explore from apartments, condos, penthouses, villas and more!",
+        "buttonText": "Browse Rentals"
+    },
+    "buy": {
+        "purpose": "BUY A HOME",
+        "title": "Find, Buy & Own \n Your Dream Home",
+        "desc": "Explore from apartments, condos, penthouses, villas and more!",
+        "buttonText": "Browse Sales"
+    },
+    "sell": {
+        "purpose": "RENT OR SELL A HOME",
+        "title": "Showcase & Rent Or Sell \n At The Fairest Price",
+        "desc": "Tell the world about your properties!",
+        "buttonText": "Showcase Your Properties"
+    }
+}
