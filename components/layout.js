@@ -4,7 +4,7 @@ import Navbar from "./navbar";
 import Footer from "./footer";
 
 const Layout = ({ title, children }) => (
-  <Container maxW={"6xl"}>
+  <Container maxW={"8xl"}>
     <Head>
       <title>{title}</title>
 

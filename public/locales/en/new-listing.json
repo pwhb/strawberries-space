@@ -1,0 +1,108 @@
+{
+    "title": "Create New Listing",
+    "subtitle": "Showcase your property",
+    "type": {
+        "apartment": "Apartment",
+        "condo": "Condo",
+        "house": "House"
+    },
+    "purpose": {
+        "rent": "Rent",
+        "sell": "Sell"
+    },
+    "currency": {
+        "mmk": "MMK",
+        "usd": "USD"
+    },
+    "states": {
+        "ayeyarwaddy": {
+            "name": "Ayeyarwaddy"
+        },
+        "bago": {
+            "name": "Bago"
+        },
+        "chin": {
+            "name": "Chin"
+        },
+        "kachin": {
+            "name": "Kachin"
+        },
+        "kayah": {
+            "name": "Kayah"
+        },
+        "kayin": {
+            "name": "Kayin"
+        },
+        "magwe": {
+            "name": "Magwe"
+        },
+        "mandalay": {
+            "name": "Mandalay"
+        },
+        "mon": {
+            "name": "Mon"
+        },
+        "rakhine": {
+            "name": "Rakhine"
+        },
+        "sagaing": {
+            "name": "Sagaing"
+        },
+        "shan": {
+            "name": "Shan"
+        },
+        "thaninthayi": {
+            "name": "Thaninthayi"
+        },
+        "yangon": {
+            "name": "Yangon",
+            "townships": {
+                "ahlone": "Ahlone",
+                "bahan": "Bahan",
+                "botataung": "Botataung",
+                "cocokyun": "Cocokyun",
+                "dagon": "Dagon",
+                "dagon-seikkan": "Dagon Seikkan",
+                "dala": "Dala",
+                "dawbon": "Dawbon",
+                "east-dagon": "East Dagon",
+                "hlaing": "Hlaing",
+                "hlaingthaya": "Hlaingthaya",
+                "hlegu": "Hlegu",
+                "hmawbi": "Hmawbi",
+                "htantabin": "Htantabin",
+                "insein": "Insein",
+                "kamayut": "Kamayut",
+                "kawhmu": "Kawhmu",
+                "kayan": "Kayan",
+                "kungyangon": "Kungyangon",
+                "kyauktada": "Kyauktada",
+                "kyauktan": "Kyauktan",
+                "kyimyindaing": "Kyimyindaing",
+                "lanmadaw": "Lanmadaw",
+                "latha": "Latha",
+                "mayangon": "Mayangon",
+                "mingala-taungnyunt": "Mingala Taungnyunt",
+                "mingaladon": "Mingaladon",
+                "north-dagon": "North Dagon",
+                "north-okkalapa": "North Okkalapa",
+                "pabedan": "Pabedan",
+                "pazundaung": "Pazundaung",
+                "sanchaung": "Sanchaung",
+                "seikkan": "Seikkan",
+                "seikkyi-kanaungto": "Seikkyi Kanaungto",
+                "shwepyitha": "Shwepyitha",
+                "south-dagon": "South Dagon",
+                "south-okkalapa": "South Okkalapa",
+                "taikkyi": "Taikkyi",
+                "tamwe": "Tamwe",
+                "thaketa": "Thaketa",
+                "thanlyin": "Thanlyin",
+                "thingangyun": "Thingangyun",
+                "thongwa": "Thongwa",
+                "twante": "Twante",
+                "yankin": "Yankin"
+            }
+        }
+    }
+}

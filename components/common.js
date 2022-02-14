@@ -1,4 +1,11 @@
-import { Flex, Text, useColorModeValue, Box, Button } from "@chakra-ui/react";
+import {
+  Flex,
+  Text,
+  useColorModeValue,
+  Box,
+  Button,
+  Link,
+} from "@chakra-ui/react";
 import { FcHome } from "react-icons/fc";
 import Image from "next/image";
 import { LocalizedLink } from "../pages";
@@ -6,17 +13,44 @@ import { useRouter } from "next/router";
 // import { MdArrowForward } from "react-icons/md";
 
 export const Logo = ({ fontSize = "xl", icon = true }) => (
-  <Flex
-    alignItems="center"
+  <Link
+    _hover={{ textDecoration: "none" }}
     color={useColorModeValue("red.500", "red.400")}
-    fontWeight="bold"
-    fontSize={fontSize}
-    hover="none"
+    href={"/"}
   >
-    {icon && <FcHome />}
-    <Text marginLeft={icon ? 2 : 0}>Strawberries Space</Text>
-  </Flex>
+    <Flex
+      alignItems="center"
+      fontWeight="bold"
+      fontSize={fontSize}
+      hover="none"
+    >
+      {icon && <FcHome />}
+      <Text marginLeft={icon ? 2 : 0}>Strawberry Space</Text>
+    </Flex>
+  </Link>
 );
+
+export const GradientButton = ({ buttonText, href }) => {
+  return (
+    <Button
+      fontFamily={"heading"}
+      bgGradient="linear(to-r, red.400,pink.400)"
+      color={"white"}
+      _hover={{
+        bgGradient: "linear(to-r, red.400,pink.400)",
+        boxShadow: "xl",
+      }}
+    >
+      {href ? (
+        <LocalizedLink href={href}>
+          <a>{buttonText}</a>
+        </LocalizedLink>
+      ) : (
+        buttonText
+      )}
+    </Button>
+  );
+};
 
 export const Banner = ({
   purpose,
@@ -26,7 +60,6 @@ export const Banner = ({
   linkName,
   imageUrl,
 }) => {
-  const router = useRouter();
   return (
     <Flex
       flexWrap="wrap"
@@ -55,18 +88,7 @@ export const Banner = ({
         >
           {desc}
         </Text>
-
-        <Button
-          fontSize={{ base: "lg", md: "xl" }}
-          bg="red.400"
-          color="white"
-          paddingBottom={router.locale === "my" ? 5 : 3}
-          paddingTop={3}
-        >
-          <LocalizedLink href={linkName}>
-            <a>{buttonText}</a>
-          </LocalizedLink>
-        </Button>
+        <GradientButton buttonText={buttonText} href={linkName} />
       </Box>
     </Flex>
   );

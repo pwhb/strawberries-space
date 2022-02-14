@@ -4,5 +4,7 @@
   "sell": "Sell",
   "search": "Search",
   "login": "Login",
-  "register": "Register"
+  "register": "Register",
+  "google": "Sign in with Google"
 }
+

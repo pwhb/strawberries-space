@@ -1,0 +1,104 @@
+{
+    "title": "ကြော်ငြာတင်ရန်",
+    "subtitle": "သင့်ပိုင်ဆိုင်မှုကို အကောင်းဆုံးပြသမယ်",
+    "type": {
+        "apartment": "တိုက်ခန်း",
+        "condo": "ကွန်ဒို",
+        "house": "လုံးချင်းအိမ်"
+    },
+    "currency": {
+        "mmk": "ကျပ်",
+        "usd": "ဒေါ်လာ"
+    },
+    "states": {
+        "ayeyarwaddy": {
+            "name": "ဧရာဝတီ"
+        },
+        "bago": {
+            "name": "ပဲခူး"
+        },
+        "chin": {
+            "name": "ချင်း"
+        },
+        "kachin": {
+            "name": "ကချင်"
+        },
+        "kayah": {
+            "name": "ကယား"
+        },
+        "kayin": {
+            "name": "ကရင်"
+        },
+        "magwe": {
+            "name": "မကွေး"
+        },
+        "mandalay": {
+            "name": "မန္တလေး"
+        },
+        "mon": {
+            "name": "မွန်"
+        },
+        "rakhine": {
+            "name": "ရခိုင်"
+        },
+        "sagaing": {
+            "name": "စစ်ကိုင်း"
+        },
+        "shan": {
+            "name": "ရှမ်း"
+        },
+        "thaninthayi": {
+            "name": "တနင်္သာရီ"
+        },
+        "yangon": {
+            "name": "ရန်ကုန်",
+            "townships": {
+                "ahlone": "အလုံ",
+                "bahan": "ဗဟန်း",
+                "botataung": "ဗိုလ်တစ်ထောင်",
+                "cocokyun": "ကိုကိုးကျွန်း",
+                "dagon": "ဒဂုံ",
+                "dagon-seikkan": "ဒဂုံဆိပ်ကမ်း",
+                "dala": "ဒလ",
+                "dawbon": "ဒေါပုံ",
+                "east-dagon": "အရှေ့ဒဂုံ",
+                "hlaing": "လှိုင်",
+                "hlaingthaya": "လှိုင်သာယာ",
+                "hlegu": "လှည်းကူး",
+                "hmawbi": "မှော်ဘီ",
+                "htantabin": "ထန်းတပင်",
+                "insein": "အင်းစိန်",
+                "kamayut": "ကမာရွတ်",
+                "kawhmu": "ကော့မှူး",
+                "kayan": "ခရမ်း",
+                "kungyangon": "ကွမ်းခြံကုန်း",
+                "kyauktada": "ကျောက်တံတား",
+                "kyauktan": "ကျောက်တန်း",
+                "kyimyindaing": "ကြည့်မြင်တိုင်",
+                "lanmadaw": "လမ်းမတော်",
+                "latha": "လသာ",
+                "mayangon": "မရမ်းကုန်း",
+                "mingala-taungnyunt": "မင်္ဂလာတောင်ညွန့်",
+                "mingaladon": "မင်္ဂလာဒုံ",
+                "north-dagon": "မြောက်ဒဂုံ",
+                "north-okkalapa": "မြောက်ဥက္ကလာပ",
+                "pabedan": "ပန်းဘဲတန်း",
+                "pazundaung": "ပုစွန်တောင်",
+                "sanchaung": "စမ်းချောင်း",
+                "seikkan": "Seikkan",
+                "seikkyi-kanaungto": "ဆိပ်ကြီးခနောင်တို",
+                "shwepyitha": "ရွှေပြည်သာ",
+                "south-dagon": "တောင်ဒဂုံ",
+                "south-okkalapa": "တောင်ဥက္ကလာပ",
+                "taikkyi": "တိုက်ကြီး",
+                "tamwe": "တာမွေ",
+                "thaketa": "သာကေတ",
+                "thanlyin": "သန်လျင်",
+                "thingangyun": "သင်္ကန်းကျွန်း",
+                "thongwa": "သုံးခွ",
+                "twante": "တွံတေး",
+                "yankin": "ရန်ကင်း"
+            }
+        }
+    }
+}

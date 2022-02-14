@@ -36,10 +36,11 @@ const Auth = () => {
         // minH={"100vh"}
         align={"center"}
         justify={"center"}
+
         // maxW={"lg"}
         // bg={useColorModeValue("gray.50", "gray.800")}
       >
-        <Stack spacing={8} maxW={"lg"} py={12} px={6}>
+        <Stack spacing={8} maxW={"lg"} width={"90%"} py={12} px={6}>
           <Stack align={"center"}>
             <Heading fontSize={"4xl"}>
               {" "}

@@ -1,11 +1,12 @@
 import "../styles/globals.css";
 import { appWithTranslation } from "next-i18next";
 import { ChakraProvider } from "@chakra-ui/react";
+import { SessionProvider } from "next-auth/react";
 import NProgress from "nprogress";
 import Router from "next/router";
 import "nprogress/nprogress.css";
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   NProgress.configure({ showSpinner: false });
   Router.events.on("routeChangeStart", () => {
     NProgress.start();
@@ -15,9 +16,11 @@ function MyApp({ Component, pageProps }) {
   });
 
   return (
-    <ChakraProvider>
-      <Component {...pageProps} />
-    </ChakraProvider>
+    <SessionProvider session={session}>
+      <ChakraProvider>
+        <Component {...pageProps} />
+      </ChakraProvider>
+    </SessionProvider>
   );
 }
 

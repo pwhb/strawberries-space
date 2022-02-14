@@ -10,6 +10,7 @@
 
 # unused
 /unused
+/lib/generator.js
 
 # next.js
 /.next/

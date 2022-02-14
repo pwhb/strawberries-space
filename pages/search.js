@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import Layout from "../components/layout";
-import { capitalize } from "../utils";
+import { capitalize } from "../lib/helpers";
 
 export async function getStaticProps({ locale }) {
   return {
