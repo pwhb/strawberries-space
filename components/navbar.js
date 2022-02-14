@@ -34,7 +34,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 const Navbar = () => {
   return (
     <>
-      <Box px={{ base: 1, md: 4 }}>
+      <Box px={{ base: 1, md: 4 }} maxW={"6xl"} mx={"auto"}>
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <Logo icon={false} fontSize={{ base: "xl", md: "3xl" }} />
 

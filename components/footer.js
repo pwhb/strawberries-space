@@ -45,10 +45,7 @@ const SocialButton = ({ children, label, href }) => {
 const Footer = () => {
   const year = new Date().getFullYear();
   return (
-    <Box
-    //   bg={useColorModeValue("gray.50", "gray.900")}
-    //   color={useColorModeValue("gray.700", "gray.200")}
-    >
+    <Box>
       <Container
         as={Stack}
         py={4}
