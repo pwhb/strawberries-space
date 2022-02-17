@@ -15,6 +15,7 @@ import {
   useColorMode,
   Center,
   IconButton,
+  useToast,
 } from "@chakra-ui/react";
 import { useTranslation } from "next-i18next";
 import { BsMoonStarsFill, BsFillSunFill } from "react-icons/bs";
@@ -30,6 +31,7 @@ import {
 import { LocalizedLink, ToggleLanguage } from "../pages";
 import { Logo } from "./common";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 const Navbar = () => {
   return (
@@ -40,9 +42,7 @@ const Navbar = () => {
 
           <Flex alignItems={"center"}>
             <Stack direction={"row"} spacing={{ base: 1, md: 7 }}>
-              <Button variant={"outline"}>
-                <ToggleLanguage />
-              </Button>
+              <ToggleLanguage />
               <MenuButtonItem />
             </Stack>
           </Flex>
@@ -57,7 +57,23 @@ export default Navbar;
 const MenuButtonItem = () => {
   const { t } = useTranslation("common");
   const { colorMode, toggleColorMode } = useColorMode();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const toast = useToast();
+  useEffect(() => {
+    if (status === "authenticated") {
+      toast({
+        title: `Logged in as ${session.user.email}.`,
+        status: "success",
+        isClosable: true,
+      });
+    } else if (status === "unauthenticated") {
+      toast({
+        title: "You're not logged in.",
+        status: "info",
+        isClosable: true,
+      });
+    }
+  }, [status]);
   return (
     <Menu>
       <MenuButton as={IconButton} icon={<MdMenu />} variant={"outline"} />
@@ -100,11 +116,21 @@ const MenuButtonItem = () => {
         </LocalizedLink>
         <MenuDivider />
         {session ? (
-          <MenuItem icon={<MdLogout />} onClick={() => signOut()}>
+          <MenuItem
+            icon={<MdLogout />}
+            onClick={() => {
+              signOut();
+            }}
+          >
             Sign out
           </MenuItem>
         ) : (
-          <MenuItem icon={<FcGoogle />} onClick={() => signIn("google")}>
+          <MenuItem
+            icon={<FcGoogle />}
+            onClick={() => {
+              signIn("google");
+            }}
+          >
             {t("google")}
           </MenuItem>
         )}

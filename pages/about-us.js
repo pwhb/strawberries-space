@@ -15,10 +15,20 @@ export async function getStaticProps({ locale }) {
 const AboutUs = () => {
   const router = useRouter();
   const { t } = useTranslation("about");
-  // console.log(about.p);
   return (
     <Layout title={"About Us"}>
       <Box maxW={"2xl"} mx={"auto"}>
+        <Text fontSize={"2xl"} p={4} fontWeight={"bold"}>
+          {t("a-title")}
+        </Text>
+        <UnorderedList>
+          {Object.keys(about.a).map((name, idx) => (
+            <ListItem key={`about-${idx}`}>
+              <Text>{t(`a.${name}`)}</Text>
+              <br />
+            </ListItem>
+          ))}
+        </UnorderedList>
         <Text fontSize={"2xl"} p={4} fontWeight={"bold"}>
           {t("m-title")}
         </Text>
@@ -34,7 +44,7 @@ const AboutUs = () => {
         <Text fontSize={"2xl"} p={4} fontWeight={"bold"}>
           {t("faq-title")}
         </Text>
-        <UnorderedList>
+        <UnorderedList marginBottom={20}>
           {Object.keys(about.faq).map((faq, idx) => (
             <ListItem key={`faq-${idx}`}>
               <Text>

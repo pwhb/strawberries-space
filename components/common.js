@@ -5,12 +5,21 @@ import {
   Box,
   Button,
   Link,
+  // Image,
+  useBreakpointValue,
+  Input,
+  FormControl,
+  FormLabel,
+  InputGroup,
+  InputLeftElement,
+  Textarea,
+  InputRightAddon,
+  Select,
+  InputRightElement,
 } from "@chakra-ui/react";
-import { FcHome } from "react-icons/fc";
 import Image from "next/image";
+import { FcHome } from "react-icons/fc";
 import { LocalizedLink } from "../pages";
-import { useRouter } from "next/router";
-// import { MdArrowForward } from "react-icons/md";
 
 export const Logo = ({ fontSize = "xl", icon = true }) => (
   <Link
@@ -30,7 +39,18 @@ export const Logo = ({ fontSize = "xl", icon = true }) => (
   </Link>
 );
 
-export const GradientButton = ({ buttonText, href }) => {
+export const GradientButton = ({
+  buttonText,
+  href,
+  onClick,
+  isExternal,
+  w,
+  minW,
+  mt,
+  mx,
+  my,
+  mb
+}) => {
   return (
     <Button
       fontFamily={"heading"}
@@ -40,17 +60,95 @@ export const GradientButton = ({ buttonText, href }) => {
         bgGradient: "linear(to-r, red.400,pink.400)",
         boxShadow: "xl",
       }}
+      w={w}
+      minW={minW ? minW : "auto"}
+      onClick={onClick}
+      mt={mt}
+      mx={mx}
+      my={my}
+      mb={mb}
     >
       {href ? (
-        <LocalizedLink href={href}>
-          <a>{buttonText}</a>
-        </LocalizedLink>
+        isExternal ? (
+          <Link href={href} isExternal>
+            {buttonText}
+          </Link>
+        ) : (
+          <LocalizedLink href={href}>
+            <a>{buttonText}</a>
+          </LocalizedLink>
+        )
       ) : (
         buttonText
       )}
     </Button>
   );
 };
+
+export const CustomInput = ({
+  label,
+  value,
+  placeholder,
+  onChange,
+  isRequired,
+  type,
+  icon,
+  w,
+  minW,
+  textarea = false,
+  step,
+  min,
+  max,
+  rightAddon,
+  disabled,
+  readOnly,
+}) => (
+  <FormControl isRequired={isRequired} w={w} minW={minW}>
+    {label && <FormLabel>{label}</FormLabel>}
+    <InputGroup>
+      {icon && <InputLeftElement>{icon}</InputLeftElement>}
+      {textarea ? (
+        <Textarea
+          type={type}
+          name={label}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+        />
+      ) : (
+        <Input
+          type={type}
+          name={label}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          step={step}
+          min={min}
+          max={max}
+          disabled={disabled}
+          readOnly={readOnly}
+        />
+      )}
+      {rightAddon && <InputRightAddon>{rightAddon}</InputRightAddon>}
+    </InputGroup>
+  </FormControl>
+);
+
+// export const CustomInput = ({ title, value, onChange, isRequired, type }) => (
+//   <Input
+//     placeholder={title}
+//     value={value}
+//     onChange={onChange}
+//     bg={"gray.100"}
+//     border={0}
+//     _placeholder={{
+//       color: "gray.500",
+//     }}
+//     color={"gray.800"}
+//     type={type}
+//     isRequired={isRequired}
+//   />
+// );
 
 export const Banner = ({
   purpose,
@@ -59,37 +157,71 @@ export const Banner = ({
   buttonText,
   linkName,
   imageUrl,
+  right,
 }) => {
+  const left = right ? useBreakpointValue({ base: true, lg: false }) : true;
   return (
     <Flex
       flexWrap="wrap"
-      justifyContent="center"
-      alignItems="center"
-      m={{ base: "4", md: "10" }}
+      // justifyContent={left ? "start" : "end"}
+      justifyContent={{ base: "start", lg: "center" }}
+      // justifyContent={"start"}
+      alignItems={"center"}
+      m={{ base: 4, md: 10 }}
     >
-      <Box p={{ base: "2", md: "5" }}>
-        <Image src={imageUrl} width={500} height={300} alt="banner photo" />
-        <Text
-          color={useColorModeValue("gray.600", "gray.400")}
-          fontSize="sm"
-          fontWeight="medium"
-          marginBottom={2}
-        >
-          {purpose}
-        </Text>
-        <Text fontSize={{ base: "xl", md: "3xl" }} fontWeight="bold">
-          {title}
-        </Text>
-        <Text
-          fontSize={{ md: "lg" }}
-          paddingTop={4}
-          paddingBottom={6}
-          color={useColorModeValue("gray.500", "gray.300")}
-        >
-          {desc}
-        </Text>
-        <GradientButton buttonText={buttonText} href={linkName} />
-      </Box>
+      {left ? (
+        <>
+          <Image src={imageUrl} width={600} height={300} alt={`${purpose}`} />
+          <Box p={{ base: "2", md: "5" }} w={"md"}>
+            <Text
+              color={useColorModeValue("gray.600", "gray.400")}
+              fontSize="sm"
+              fontWeight="medium"
+              my={2}
+            >
+              {purpose}
+            </Text>
+            <Text fontSize={{ base: "lg", md: "3xl" }} fontWeight="bold">
+              {title}
+            </Text>
+            <Text
+              fontSize={{ md: "lg" }}
+              marginTop={2}
+              marginBottom={6}
+              color={useColorModeValue("gray.500", "gray.300")}
+            >
+              {desc}
+            </Text>
+            <GradientButton buttonText={buttonText} href={linkName} />
+          </Box>
+        </>
+      ) : (
+        <>
+          <Box p={{ base: "2", md: "5" }} w={"md"}>
+            <Text
+              color={useColorModeValue("gray.600", "gray.400")}
+              fontSize="sm"
+              fontWeight="medium"
+              my={2}
+            >
+              {purpose}
+            </Text>
+            <Text fontSize={{ base: "lg", md: "3xl" }} fontWeight="bold">
+              {title}
+            </Text>
+            <Text
+              fontSize={{ md: "lg" }}
+              marginTop={2}
+              marginBottom={6}
+              color={useColorModeValue("gray.500", "gray.300")}
+            >
+              {desc}
+            </Text>
+            <GradientButton buttonText={buttonText} href={linkName} />
+          </Box>
+          <Image src={imageUrl} width={600} height={300} alt={`${purpose}`} />
+        </>
+      )}
     </Flex>
   );
 };

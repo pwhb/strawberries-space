@@ -3,12 +3,16 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Layout from "../components/layout";
-import { Avatar } from "@chakra-ui/react";
+import { Avatar, Button } from "@chakra-ui/react";
 import { Banner } from "../components/common";
+import { getCsrfToken, getSession } from "next-auth/react";
 
-export async function getStaticProps({ locale }) {
+export async function getServerSideProps(ctx) {
+  const { locale } = ctx;
+
   return {
     props: {
+      session: await getSession(ctx),
       ...(await serverSideTranslations(locale, ["home", "common"])),
     },
   };
@@ -33,6 +37,7 @@ export default function Home() {
         buttonText={t("buy.buttonText")}
         linkName="/search?purpose=buy"
         imageUrl="https://cdn.pixabay.com/photo/2017/01/07/17/48/interior-1961070_960_720.jpg"
+        right={true}
       />
       <Banner
         purpose={t("sell.purpose")}
@@ -48,18 +53,24 @@ export default function Home() {
 
 export const ToggleLanguage = () => {
   const router = useRouter();
+  const { pathname, asPath, query } = router;
   return (
-    <Link
-      passHref
-      href={router.asPath}
-      locale={router.locale === "en" ? "my" : "en"}
+    <Button
+      onClick={() =>
+        router.push({ pathname, query }, asPath, {
+          locale: router.locale === "en" ? "my" : "en",
+        })
+      }
+      variant={"outline"}
+      // href={router.locale === "en" ? router.asPath : `en/${router.asPath}`}
+      // locale={false}
     >
       {router.locale === "en" ? (
         <Avatar size={"2xs"} src={"/images/my.svg"} />
       ) : (
         <Avatar size={"2xs"} src={"/images/en.svg"} />
       )}
-    </Link>
+    </Button>
   );
 };
 
