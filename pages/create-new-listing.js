@@ -4,10 +4,10 @@ import {
   Stack,
   Heading,
   Text,
-  Container,
+  Image,
   Input,
   Button,
-  SimpleGrid,
+  Flex,
   useColorModeValue,
   HStack,
   Select,
@@ -15,24 +15,37 @@ import {
   FormLabel,
   RadioGroup,
   Radio,
-  Checkbox,
   VStack,
+  useToast,
+  IconButton,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverBody,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { FaBath, FaBed } from "react-icons/fa";
-
+import { FaBath, FaBed, FaPhoneAlt } from "react-icons/fa";
+import { MdAddAPhoto } from "react-icons/md";
+// import { useDropzone } from "react-dropzone";
+import Dropzone from "react-dropzone";
 import jsonFile from "../public/locales/en/new-listing.json";
 
-import { useEffect, useRef, useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { getSession } from "next-auth/react";
 import { CustomInput, GradientButton } from "../components/common";
 import { capitalize } from "../lib/helpers";
+import { validateForm } from "../lib/validator";
+import axios from "axios";
 
 export async function getServerSideProps(ctx) {
   const { locale } = ctx;
   const session = await getSession(ctx);
-  if (!session.user) {
+  if (!session) {
     return {
       redirect: {
         destination: "/login",
@@ -48,7 +61,10 @@ export async function getServerSideProps(ctx) {
 }
 
 const CreateNewListing = () => {
+  const [photos, setPhotos] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [phones, setPhones] = useState([""]);
+  const [error, setError] = useState({});
   const [formData, setFormData] = useState({
     added_by: "",
     title: "",
@@ -61,29 +77,22 @@ const CreateNewListing = () => {
     bathrooms: 1,
     floor_level: "",
     floor_type: "",
-    photos: [],
-    phone_number: [],
-    location: {
-      lat: 0,
-      lng: 0,
-      home_no: "",
-      street: "",
-      township: "",
-      state: "yangon",
-    },
+    lat: 0,
+    lng: 0,
+    home_no: "",
+    street: "",
+    township: "",
+    state: "yangon",
     tags: [],
     status: "",
-    area: {
-      width: 0,
-      length: 0,
-      lot_width: 0,
-      lot_length: 0,
-    },
+    width: 0,
+    length: 0,
+    lot_width: 0,
+    lot_length: 0,
   });
   const { t } = useTranslation("new-listing");
-  // const states = Object.keys(jsonFile.states);
 
-  // console.log(states);
+  const toast = useToast();
   const generateTitle = () => {
     const {
       location,
@@ -99,26 +108,109 @@ const CreateNewListing = () => {
     )}`;
     setFormData({ ...formData, title });
   };
-  const onSubmit = () => {
-    console.log(formData);
-    console.log(phones);
+
+  const onSubmit = async () => {
+    setError({});
+    const newError = validateForm({ ...formData, phone_numbers: phones });
+    setError(newError);
+    if (Object.keys(newError).length > 0) {
+      toast({
+        title: "Failed to post.",
+        description: "Please fill the necessary fields first.",
+        status: "error",
+        isClosable: true,
+      });
+    } else {
+      try {
+        setIsLoading(true);
+        const { data } = await axios.post("http://localhost:3000/api/upload", {
+          photos,
+        });
+        console.log("data", data);
+        
+        const images = data.map((image) => image.secure_url);
+
+        const res = await axios.post("http://localhost:3000/api/listings", {
+          ...formData,
+          phones,
+          images,
+        });
+        setIsLoading(false);
+        console.log(res);
+      } catch (e) {
+        toast({
+          title: "Failed to post.",
+          description: "Sorry, something went wrong.",
+          status: "error",
+          isClosable: true,
+        });
+        setIsLoading(false);
+        console.log(e);
+      }
+    }
+  };
+
+  const onChange = (e) => {
+    setError({ ...error, [e.target.name]: false });
+    if (e.target.name === "state") {
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.value,
+        township: "",
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [e.target.name]:
+          e.target.type === "number"
+            ? parseInt(e.target.value)
+            : e.target.value,
+      });
+    }
   };
 
   const getCurrentLocation = () => {
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
-      console.log(latitude);
-      console.log(longitude);
+      console.log(latitude, longitude);
       setFormData({
         ...formData,
-        location: {
-          ...formData.location,
-          lat: latitude,
-          lng: longitude,
-        },
+        lat: latitude,
+        lng: longitude,
       });
     });
   };
+
+  const removePhoto = (idx) => {
+    // console.log("idx", idx);
+    setPhotos((prevVal) =>
+      prevVal.filter((img, i) => {
+        return i !== idx;
+      })
+    );
+  };
+
+  const handleFiles = (files) => {
+    files.forEach((val) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPhotos((prevVal) => [...prevVal, reader.result]);
+      };
+      reader.readAsDataURL(val);
+    });
+  };
+
+  const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
+    handleFiles(acceptedFiles);
+  }, []);
+
+  const onChangeInputFiles = (e) => {
+    handleFiles(Array.from(e.target.files));
+  };
+
+  const fileInput = useRef();
+
+  // const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   return (
     <Layout title={"Create New Listing"}>
       <Box maxW={"4xl"} mx={"auto"} marginTop={20}>
@@ -155,11 +247,11 @@ const CreateNewListing = () => {
               <HStack alignItems={"end"}>
                 <CustomInput
                   isRequired
+                  name={"title"}
                   label={t("form.title")}
                   value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
+                  onChange={onChange}
+                  isInvalid={error.title}
                 />
 
                 <GradientButton
@@ -168,15 +260,14 @@ const CreateNewListing = () => {
                 />
               </HStack>
               <CustomInput
+                name={"description"}
                 label={t("form.description")}
                 value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
+                onChange={onChange}
                 textarea
               />
               <HStack wrap={"wrap"}>
-                <FormControl isRequired w={"auto"}>
+                <FormControl isRequired w={"auto"} isInvalid={error.category}>
                   <FormLabel>{t("form.category")}</FormLabel>
                   <RadioGroup
                     value={formData.category}
@@ -198,13 +289,9 @@ const CreateNewListing = () => {
                   <FormControl isRequired w={"3xs"}>
                     <FormLabel>{t("form.floor_level")}</FormLabel>
                     <Select
+                      name={"floor_level"}
                       value={formData.floor_level}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          floor_level: e.target.value,
-                        })
-                      }
+                      onChange={onChange}
                     >
                       {Object.keys(jsonFile.floor_level).map((floor, idx) => (
                         <option value={floor} key={`${floor}-${idx}`}>
@@ -219,10 +306,9 @@ const CreateNewListing = () => {
                 <FormControl w={"auto"} isRequired>
                   <FormLabel>{t("form.purpose")}</FormLabel>
                   <Select
+                    name={"purpose"}
                     value={formData.purpose}
-                    onChange={(e) =>
-                      setFormData({ ...formData, purpose: e.target.value })
-                    }
+                    onChange={onChange}
                   >
                     {Object.keys(jsonFile.purpose).map((purpose, idx) => (
                       <option value={purpose} key={`${purpose}-${idx}`}>
@@ -232,13 +318,12 @@ const CreateNewListing = () => {
                   </Select>
                 </FormControl>
                 <CustomInput
+                  name={"price"}
                   label={t("form.price")}
                   isRequired
                   w={"auto"}
                   value={formData.price}
-                  onChange={(e) =>
-                    setFormData({ ...formData, price: e.target.value })
-                  }
+                  onChange={onChange}
                   type={"number"}
                   step={formData.purpose === "sell" ? 100000 : 1000}
                   min={formData.purpose === "sell" ? 1000000 : 100000}
@@ -247,14 +332,14 @@ const CreateNewListing = () => {
                       ? t("currency.mmk")
                       : t("currency.usd")
                   }
+                  isInvalid={error.price}
                 />
                 <FormControl w={"auto"} isRequired>
                   <FormLabel>{t("form.currency")}</FormLabel>
                   <Select
+                    name={"currency"}
                     value={formData.currency}
-                    onChange={(e) =>
-                      setFormData({ ...formData, currency: e.target.value })
-                    }
+                    onChange={onChange}
                   >
                     <option value="mmk">{t("currency.mmk")}</option>
                     <option value="usd">{t("currency.usd")}</option>
@@ -265,14 +350,10 @@ const CreateNewListing = () => {
                 <CustomInput
                   isRequired
                   w={"auto"}
+                  name={"bedrooms"}
                   label={t("form.bedrooms")}
                   value={formData.bedrooms}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      bedrooms: e.target.value,
-                    })
-                  }
+                  onChange={onChange}
                   icon={<FaBed />}
                   type={"number"}
                   rightAddon={
@@ -282,14 +363,10 @@ const CreateNewListing = () => {
                 <CustomInput
                   isRequired
                   w={"auto"}
+                  name={"bathrooms"}
                   label={t("form.bathrooms")}
                   value={formData.bathrooms}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      bathrooms: e.target.value,
-                    })
-                  }
+                  onChange={onChange}
                   icon={<FaBath />}
                   type={"number"}
                   rightAddon={
@@ -301,43 +378,30 @@ const CreateNewListing = () => {
                 <CustomInput
                   isRequired
                   w={"auto"}
-                  label={t("form.area.width")}
-                  value={formData.area.width}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      area: {
-                        ...formData.area,
-                        width: e.target.value,
-                      },
-                    })
-                  }
+                  name={"width"}
+                  label={t("form.width")}
+                  value={formData.width}
+                  onChange={onChange}
                   type={"number"}
                   rightAddon={t("units.ft")}
+                  isInvalid={error.width}
                 />
                 <CustomInput
                   isRequired
                   w={"auto"}
-                  label={t("form.area.length")}
-                  value={formData.area.length}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      area: {
-                        ...formData.area,
-                        length: e.target.value,
-                      },
-                    })
-                  }
+                  name={"length"}
+                  label={t("form.length")}
+                  value={formData.length}
+                  onChange={onChange}
                   type={"number"}
                   rightAddon={t("units.ft")}
+                  isInvalid={error.length}
                 />
 
                 <CustomInput
-                  isRequired
                   w={"auto"}
-                  label={t("form.area.home")}
-                  value={formData.area.length * formData.area.width}
+                  label={t("form.home")}
+                  value={formData.length * formData.width}
                   rightAddon={t("units.sqft")}
                   readOnly
                 />
@@ -348,42 +412,29 @@ const CreateNewListing = () => {
                   <CustomInput
                     isRequired
                     w={"auto"}
-                    label={t("form.area.lot_width")}
-                    value={formData.area.lot_width}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        area: {
-                          ...formData.area,
-                          lot_width: e.target.value,
-                        },
-                      })
-                    }
+                    name={"lot_width"}
+                    label={t("form.lot_width")}
+                    value={formData.lot_width}
+                    onChange={onChange}
                     type={"number"}
                     rightAddon={t("units.ft")}
+                    isInvalid={error.lot_width}
                   />
                   <CustomInput
                     isRequired
                     w={"auto"}
-                    label={t("form.area.lot_length")}
-                    value={formData.area.lot_length}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        area: {
-                          ...formData.area,
-                          lot_length: e.target.value,
-                        },
-                      })
-                    }
+                    name={"lot_length"}
+                    label={t("form.lot_length")}
+                    value={formData.lot_length}
+                    onChange={onChange}
                     type={"number"}
                     rightAddon={t("units.ft")}
+                    isInvalid={error.lot_length}
                   />
                   <CustomInput
-                    isRequired
                     w={"auto"}
-                    label={t("form.area.lot")}
-                    value={formData.area.lot_length * formData.area.lot_width}
+                    label={t("form.lot")}
+                    value={formData.lot_length * formData.lot_width}
                     rightAddon={t("units.sqft")}
                     readOnly
                   />
@@ -391,74 +442,46 @@ const CreateNewListing = () => {
               )}
               <HStack>
                 <CustomInput
+                  name={"home_no"}
                   label={
                     formData.category === "apartment" ||
                     formData.category === "condo"
-                      ? t("form.location.building_no")
-                      : t("form.location.home_no")
+                      ? t("form.building_no")
+                      : t("form.home_no")
                   }
-                  value={formData.location.home_no}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      location: {
-                        ...formData.location,
-                        home_no: e.target.value,
-                      },
-                    })
-                  }
+                  value={formData.home_no}
+                  onChange={onChange}
                 />
                 <CustomInput
-                  label={t("form.location.street")}
-                  value={formData.location.street}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      location: {
-                        ...formData.location,
-                        street: e.target.value,
-                      },
-                    })
-                  }
+                  name={"street"}
+                  label={t("form.street")}
+                  value={formData.street}
+                  onChange={onChange}
                 />
               </HStack>
               <HStack>
-                <FormControl isRequired>
-                  <FormLabel>{t("form.location.township")}</FormLabel>
+                <FormControl isRequired isInvalid={error.township}>
+                  <FormLabel>{t("form.township")}</FormLabel>
                   <Select
-                    value={formData.location.township}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        location: {
-                          ...formData.location,
-                          township: e.target.value,
-                        },
-                      })
-                    }
+                    name={"township"}
+                    value={formData.township}
+                    onChange={onChange}
                   >
-                    {Object.keys(jsonFile[formData.location.state]).map(
+                    {Object.keys(jsonFile[formData.state]).map(
                       (township, idx) => (
                         <option value={township} key={`${township}-${idx}`}>
-                          {t(`${formData.location.state}.${township}`)}
+                          {t(`${formData.state}.${township}`)}
                         </option>
                       )
                     )}
                   </Select>
                 </FormControl>
                 <FormControl isRequired>
-                  <FormLabel>{t("form.location.state")}</FormLabel>
+                  <FormLabel>{t("form.state")}</FormLabel>
                   <Select
-                    value={formData.location.state}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        location: {
-                          ...formData.location,
-                          state: e.target.value,
-                        },
-                      })
-                    }
+                    name={"state"}
+                    value={formData.state}
+                    onChange={onChange}
                   >
                     {Object.keys(jsonFile.states).map((state, idx) => (
                       <option value={state} key={`${state}-${idx}`}>
@@ -471,34 +494,20 @@ const CreateNewListing = () => {
 
               <HStack alignItems={"end"} wrap={"wrap"}>
                 <CustomInput
-                  label={t("form.location.lat")}
-                  value={formData.location.lat}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      location: {
-                        ...formData.location,
-                        lat: e.target.value,
-                      },
-                    })
-                  }
+                  name={"lat"}
+                  label={t("form.lat")}
+                  value={formData.lat}
+                  onChange={onChange}
                   type={"number"}
                   w={"auto"}
                   min={-180}
                   max={180}
                 />
                 <CustomInput
-                  label={t("form.location.lng")}
-                  value={formData.location.lng}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      location: {
-                        ...formData.location,
-                        lng: e.target.value,
-                      },
-                    })
-                  }
+                  name={"lng"}
+                  label={t("form.lng")}
+                  value={formData.lng}
+                  onChange={onChange}
                   type={"number"}
                   w={"auto"}
                   min={-180}
@@ -511,38 +520,111 @@ const CreateNewListing = () => {
                 <GradientButton
                   buttonText={t("form.google-map")}
                   href={
-                    formData.location.lat && formData.location.lng
-                      ? `https://www.google.com/maps/place/${formData.location.lat},${formData.location.lng}`
+                    formData.lat && formData.lng
+                      ? `https://www.google.com/maps/place/${formData.lat},${formData.lng}`
                       : "https://www.google.com/maps"
                   }
                   isExternal
                 />
               </HStack>
-              <FormControl>
+              <FormControl isRequired>
                 <FormLabel>{t("form.phone_number")}</FormLabel>
-                {phones.map((phone, idx) => (
-                  <HStack key={`phone-${idx}`}>
-                    <CustomInput
-                      value={phone}
-                      onChange={(e) =>
-                        setPhones({
-                          ...phones,
-                          [idx]: e.target.value,
-                        })
-                      }
+                <VStack spacing={3} alignItems={"start"}>
+                  {phones.map((phone, idx) => (
+                    <HStack key={`phone-${idx}`}>
+                      <CustomInput
+                        value={phone}
+                        isInvalid={error.phone_numbers}
+                        onChange={(e) => {
+                          setPhones(
+                            phones.map((ph, i) =>
+                              i === idx ? e.target.value : ph
+                            )
+                          );
+                        }}
+                        icon={<FaPhoneAlt />}
+                        type={"number"}
+                        isRequired={idx === 0}
+                      />
+                      {idx === 0 ? (
+                        <Button
+                          variant={"outline"}
+                          onClick={() => setPhones((prev) => prev.concat(""))}
+                        >
+                          +
+                        </Button>
+                      ) : (
+                        <Button
+                          variant={"outline"}
+                          onClick={() =>
+                            setPhones((prev) =>
+                              prev.filter((v, i) => i !== idx)
+                            )
+                          }
+                        >
+                          -
+                        </Button>
+                      )}
+                    </HStack>
+                  ))}
+                </VStack>
+              </FormControl>
+
+              {photos && (
+                <Flex direction={"row"} wrap={"wrap"}>
+                  {photos.map((photo, idx) => (
+                    <ImagePopover
+                      src={photo}
+                      idx={idx}
+                      onClick={() => removePhoto(idx)}
+                      key={`photo-${idx}`}
                     />
-                    {idx === 0 ? (
-                      <Button
-                        variant={"outline"}
-                        onClick={() => setPhones((prev) => prev.concat(""))}
+                  ))}
+                </Flex>
+              )}
+              <FormControl>
+                <FormLabel>Add photos</FormLabel>
+                <GradientButton
+                  onClick={(e) => {
+                    fileInput.current.click();
+                  }}
+                  buttonText={<MdAddAPhoto />}
+                  mb={3}
+                />
+
+                <Dropzone
+                  onDrop={onDrop}
+                  accept={"image/jpg,image/png,image/jpeg,image/svg"}
+                >
+                  {({ getRootProps, getInputProps, isDragActive }) => (
+                    <Box
+                      border={"dotted"}
+                      p={10}
+                      bg={isDragActive ? "green.100" : ""}
+                      color={isDragActive ? "green.400" : ""}
+                      {...getRootProps()}
+                    >
+                      <Input
+                        type={"file"}
+                        accept={"image/jpg,image/png,image/jpeg,image/svg"}
+                        {...getInputProps}
+                        multiple
+                        onChange={onChangeInputFiles}
+                        ref={fileInput}
+                        hidden
+                      />
+                      <Text
+                        fontSize={isDragActive ? "xl" : "xs"}
+                        fontWeight={isDragActive ? "semibold" : ""}
+                        align={"center"}
                       >
-                        +
-                      </Button>
-                    ) : (
-                      <Button variant={"outline"}>-</Button>
-                    )}
-                  </HStack>
-                ))}
+                        {isDragActive
+                          ? "Yes, drop the photos here!"
+                          : "Or drop your photos here"}
+                      </Text>
+                    </Box>
+                  )}
+                </Dropzone>
               </FormControl>
             </Stack>
             <GradientButton
@@ -550,6 +632,7 @@ const CreateNewListing = () => {
               onClick={onSubmit}
               w={"full"}
               mt={10}
+              isLoading={isLoading}
             />
           </Box>
         </Stack>
@@ -558,97 +641,25 @@ const CreateNewListing = () => {
   );
 };
 
-const Copied = () => (
-  <Box position={"relative"}>
-    <Container
-      as={SimpleGrid}
-      maxW={"7xl"}
-      columns={{ base: 1, md: 2 }}
-      spacing={{ base: 10, lg: 32 }}
-      py={{ base: 10, sm: 20, lg: 32 }}
-    >
-      <Stack spacing={{ base: 10, md: 20 }}>
-        <Heading
-          lineHeight={1.1}
-          fontSize={{ base: "3xl", sm: "4xl", md: "5xl", lg: "6xl" }}
-        >
-          {t("title")}
-        </Heading>
-      </Stack>
-      <Stack
-        bg={"gray.50"}
-        rounded={"xl"}
-        p={{ base: 4, sm: 6, md: 8 }}
-        spacing={{ base: 8 }}
-        maxW={{ lg: "2xl" }}
-      >
-        <Stack spacing={4}>
-          <Heading
-            color={"gray.800"}
-            lineHeight={1.9}
-            fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }}
-          >
-            {t("subtitle")}
-            <Text
-              as={"span"}
-              bgGradient="linear(to-r, red.400,pink.400)"
-              bgClip="text"
-            >
-              !
-            </Text>
-          </Heading>
-        </Stack>
-        <Box as={"form"} mt={10}>
-          <Stack spacing={4}>
-            <Input
-              placeholder="Firstname"
-              bg={"gray.100"}
-              border={0}
-              color={"gray.500"}
-              _placeholder={{
-                color: "gray.500",
-              }}
-            />
-            <Input
-              placeholder="firstname@lastname.io"
-              bg={"gray.100"}
-              border={0}
-              color={"gray.500"}
-              _placeholder={{
-                color: "gray.500",
-              }}
-            />
-            <Input
-              placeholder="+1 (___) __-___-___"
-              bg={"gray.100"}
-              border={0}
-              color={"gray.500"}
-              _placeholder={{
-                color: "gray.500",
-              }}
-            />
-            <Button fontFamily={"heading"} bg={"gray.200"} color={"gray.800"}>
-              Upload CV
-            </Button>
-          </Stack>
-          <Button
-            fontFamily={"heading"}
-            mt={8}
-            w={"full"}
-            bgGradient="linear(to-r, red.400,pink.400)"
-            color={"white"}
-            _hover={{
-              bgGradient: "linear(to-r, red.400,pink.400)",
-              boxShadow: "xl",
-            }}
-          >
-            Submit
+const ImagePopover = ({ src, idx, onClick }) => {
+  const { onClose } = useDisclosure();
+  // const popover = useRef();
+  return (
+    <Popover>
+      <PopoverTrigger>
+        <Image alt={`photo-${idx}`} src={src} m={3} height={72} />
+      </PopoverTrigger>
+      <PopoverContent>
+        <PopoverArrow />
+        <PopoverCloseButton />
+        <PopoverHeader>Want to remove this photo?</PopoverHeader>
+        <PopoverBody align={"right"}>
+          <Button colorScheme={"green"} mx={3} onClick={onClick}>
+            Yes
           </Button>
-        </Box>
-        form
-      </Stack>
-    </Container>
-  </Box>
-);
-
+        </PopoverBody>
+      </PopoverContent>
+    </Popover>
+  );
+};
 export default CreateNewListing;

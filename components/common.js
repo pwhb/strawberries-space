@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   Link,
-  // Image,
   useBreakpointValue,
   Input,
   FormControl,
@@ -14,9 +13,8 @@ import {
   InputLeftElement,
   Textarea,
   InputRightAddon,
-  Select,
-  InputRightElement,
 } from "@chakra-ui/react";
+
 import Image from "next/image";
 import { FcHome } from "react-icons/fc";
 import { LocalizedLink } from "../pages";
@@ -49,7 +47,8 @@ export const GradientButton = ({
   mt,
   mx,
   my,
-  mb
+  mb,
+  isLoading,
 }) => {
   return (
     <Button
@@ -67,6 +66,7 @@ export const GradientButton = ({
       mx={mx}
       my={my}
       mb={mb}
+      isLoading={isLoading}
     >
       {href ? (
         isExternal ? (
@@ -86,6 +86,7 @@ export const GradientButton = ({
 };
 
 export const CustomInput = ({
+  name,
   label,
   value,
   placeholder,
@@ -102,37 +103,45 @@ export const CustomInput = ({
   rightAddon,
   disabled,
   readOnly,
-}) => (
-  <FormControl isRequired={isRequired} w={w} minW={minW}>
-    {label && <FormLabel>{label}</FormLabel>}
-    <InputGroup>
-      {icon && <InputLeftElement>{icon}</InputLeftElement>}
-      {textarea ? (
-        <Textarea
-          type={type}
-          name={label}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-        />
-      ) : (
-        <Input
-          type={type}
-          name={label}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          step={step}
-          min={min}
-          max={max}
-          disabled={disabled}
-          readOnly={readOnly}
-        />
-      )}
-      {rightAddon && <InputRightAddon>{rightAddon}</InputRightAddon>}
-    </InputGroup>
-  </FormControl>
-);
+  isInvalid,
+}) => {
+  return (
+    <FormControl
+      isRequired={isRequired}
+      w={w}
+      minW={minW}
+      isInvalid={isInvalid}
+    >
+      {label && <FormLabel>{label}</FormLabel>}
+      <InputGroup>
+        {icon && <InputLeftElement>{icon}</InputLeftElement>}
+        {textarea ? (
+          <Textarea
+            type={type}
+            name={name}
+            placeholder={placeholder}
+            value={value}
+            onChange={onChange}
+          />
+        ) : (
+          <Input
+            type={type}
+            name={name}
+            placeholder={placeholder}
+            value={value}
+            onChange={onChange}
+            step={step}
+            min={min}
+            max={max}
+            disabled={disabled}
+            readOnly={readOnly}
+          />
+        )}
+        {rightAddon && <InputRightAddon>{rightAddon}</InputRightAddon>}
+      </InputGroup>
+    </FormControl>
+  );
+};
 
 // export const CustomInput = ({ title, value, onChange, isRequired, type }) => (
 //   <Input
