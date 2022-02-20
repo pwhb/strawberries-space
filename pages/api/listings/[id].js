@@ -1,25 +1,40 @@
 import clientPromise from "../../../lib/mongodb";
 import { getSession } from "next-auth/react";
+import { ObjectId } from "mongodb";
 
 const ListingsHandler = async (req, res) => {
   const { method } = req;
   const client = await clientPromise;
   const db = client.db("test_database");
-
+  //   const { ObjectId } = mongodb;
+  console.log(ObjectId);
   switch (method) {
     case "GET":
-      const { purpose, limit } = req.query;
-      const query = {};
-      if (purpose) {
-        query.purpose = purpose;
-      }
+      const { id } = req.query;
       const docs = await db
         .collection("listings")
-        .find(query)
-        .limit(limit ? limit : 40)
+        // .findOne({ _id: new ObjectId(id) })
+        .aggregate([
+          {
+            $match: {
+              _id: new ObjectId(id),
+            },
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "added_by",
+              foreignField: "_id",
+              as: "added_by",
+            },
+          },
+          { $unwind: "$added_by" },
+        ])
         .toArray();
-      // console.log(docs);
-      res.json(docs);
+
+      console.log(docs);
+
+      res.json(docs[0]);
       break;
     case "POST":
       try {
@@ -90,7 +105,7 @@ const ListingsHandler = async (req, res) => {
           created_at: new Date(),
           updated_at: new Date(),
         });
-        // console.log(doc);
+        console.log(doc);
         res.status(200).json("ok");
       } catch (e) {
         console.log(e);
