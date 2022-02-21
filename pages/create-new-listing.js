@@ -18,16 +18,17 @@ export async function getServerSideProps(ctx) {
   }
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["new-listing", "common"])),
+      base_url: process.env.BASE_URL,
+      ...(await serverSideTranslations(locale, ["listing", "common"])),
     },
   };
 }
 
-const CreateNewListing = () => {
+const CreateNewListing = ({ base_url }) => {
   // const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   return (
     <Layout title={"Create New Listing"}>
-      <ListingForm />
+      <ListingForm base_url={base_url} />
     </Layout>
   );
 };

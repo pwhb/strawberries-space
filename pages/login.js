@@ -39,17 +39,14 @@ const SignIn = () => {
     if (status === "authenticated") {
       router.back();
     }
-  }, [status]);
+  }, [status, router]);
   return (
     <Layout title={"Log In"}>
       <Box maxW={"2xl"} mx={"auto"} align={"center"} minH={"xl"}>
         <Text fontSize={"2xl"} p={4} fontWeight={"bold"}>
-          Login to your account
+          {t("title")}
         </Text>
-        <Text my={10}>
-          {" "}
-          You have to login first to sell or rent a property.
-        </Text>
+        <Text my={10}>{t("subtitle")}</Text>
 
         <Button
           leftIcon={<FcGoogle />}
@@ -60,7 +57,7 @@ const SignIn = () => {
           }}
           isLoading={status === "loading"}
         >
-          Sign In with Google
+          {t("buttonText")}
         </Button>
       </Box>
     </Layout>

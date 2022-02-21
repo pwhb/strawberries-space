@@ -1,6 +1,8 @@
 import { useState } from "react";
 import {
   Box,
+  Flex,
+  HStack,
   IconButton,
   Image,
   useBreakpointValue,
@@ -17,7 +19,7 @@ const settings = {
   arrows: false,
   fade: true,
   infinite: true,
-  autoplay: true,
+  // autoplay: true,
   speed: 500,
   autoplaySpeed: 5000,
   slidesToShow: 1,
@@ -25,75 +27,58 @@ const settings = {
 };
 
 const Carousel = ({ images }) => {
-  // As we have used custom buttons, we need a reference variable to
-  // change the state
   const [slider, setSlider] = useState(null);
-
-  // These are the breakpoints which changes the position of the
-  // buttons as the screen size changes
-  const top = useBreakpointValue({ base: "90%", md: "35%" });
-  const side = useBreakpointValue({ base: "30%", md: "300px" });
-
   return (
-    <Box
-      bg={useColorModeValue("pink.50", "gray.900")}
-      maxW={"5xl"}
-      mx={"auto"}
-      boxShadow={"lg"}
-    >
-      {/* CSS files for react-slick */}
-      <link
-        rel="stylesheet"
-        type="text/css"
-        charSet="UTF-8"
-        href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css"
-      />
-      <link
-        rel="stylesheet"
-        type="text/css"
-        href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
-      />
-      {/* Left Icon */}
+    <HStack mx={"auto"} justifyContent={"center"}>
       <IconButton
-        aria-label="left-arrow"
-        colorScheme="red"
-        borderRadius="full"
-        position="absolute"
-        left={side}
-        top={top}
-        transform={"translate(0%, -50%)"}
-        zIndex={2}
+        icon={<BiLeftArrowAlt />}
+        // variant={"outline"}
+        colorScheme={"red"}
         onClick={() => slider?.slickPrev()}
+      />
+
+      <Box
+        bg={useColorModeValue("pink.50", "gray.900")}
+        maxW={"5xl"}
+        mx={"auto"}
+        boxShadow={"lg"}
       >
-        <BiLeftArrowAlt />
-      </IconButton>
-      {/* Right Icon */}
+        {/* CSS files for react-slick */}
+        <link
+          rel="stylesheet"
+          type="text/css"
+          charSet="UTF-8"
+          href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css"
+        />
+        <link
+          rel="stylesheet"
+          type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
+        />
+        {/* Left Icon */}
+
+        {/* Right Icon */}
+
+        {/* Slider */}
+        <Slider {...settings} ref={(slider) => setSlider(slider)}>
+          {images.map((url, idx) => (
+            <Image
+              key={idx}
+              alt={`photo-${idx}`}
+              src={url}
+              fit={"contain"}
+              maxH={{ base: 300, md: 600 }}
+            />
+          ))}
+        </Slider>
+      </Box>
       <IconButton
-        aria-label="right-arrow"
-        colorScheme="red"
-        borderRadius="full"
-        position="absolute"
-        right={side}
-        top={top}
-        transform={"translate(0%, -50%)"}
-        zIndex={2}
+        icon={<BiRightArrowAlt />}
+        // variant={"outline"}
+        colorScheme={"red"}
         onClick={() => slider?.slickNext()}
-      >
-        <BiRightArrowAlt />
-      </IconButton>
-      {/* Slider */}
-      <Slider {...settings} ref={(slider) => setSlider(slider)}>
-        {images.map((url, idx) => (
-          <Image
-            key={idx}
-            alt={`photo-${idx}`}
-            src={url}
-            fit={"contain"}
-            maxH={600}
-          />
-        ))}
-      </Slider>
-    </Box>
+      />
+    </HStack>
   );
 };
 

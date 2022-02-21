@@ -16,7 +16,7 @@ const ListingsHandler = async (req, res) => {
       const docs = await db
         .collection("listings")
         .find(query)
-        .limit(limit ? limit : 40)
+        .limit(limit ? parseInt(limit) : 40)
         .toArray();
       // console.log(docs);
       res.json(docs);
@@ -90,8 +90,8 @@ const ListingsHandler = async (req, res) => {
           created_at: new Date(),
           updated_at: new Date(),
         });
-        // console.log(doc);
-        res.status(200).json("ok");
+        console.log(doc);
+        res.status(200).json(doc);
       } catch (e) {
         console.log(e);
         res.json(e);

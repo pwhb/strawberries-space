@@ -9,13 +9,20 @@ import {
   Divider,
   HStack,
   useColorModeValue,
+  GridItem,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { FaBed, FaBath, FaHome, FaBuilding } from "react-icons/fa";
-import { BsGridFill } from "react-icons/bs";
+import {
+  FaBed,
+  FaBath,
+  FaHome,
+  FaBuilding,
+  FaRulerCombined,
+} from "react-icons/fa";
 import { useTranslation } from "next-i18next";
 import { numInBurmese } from "../lib/formatters";
 import { LocalizedLink } from "../pages/index";
+import placeholder from "../public/images/placeholder.svg";
 const ListingItem = ({
   listing: {
     _id,
@@ -28,13 +35,16 @@ const ListingItem = ({
     bathrooms,
     width,
     length,
+    lot_width,
+    lot_length,
   },
 }) => {
-  const { t } = useTranslation("new-listing");
+  const { t } = useTranslation("listing");
   const { locale } = useRouter();
+  const area = lot_width ? lot_width * lot_length : width * length;
   return (
     <LocalizedLink href={`properties/${_id}`}>
-      <Flex
+      <GridItem
         as={"button"}
         w={400}
         direction={"column"}
@@ -44,7 +54,7 @@ const ListingItem = ({
         // justifyItems={"center"}
       >
         <Image
-          src={images[0]}
+          src={images[0] ? images[0] : "/images/placeholder.svg"}
           alt={title}
           w={400}
           objectFit={"contain"}
@@ -85,13 +95,12 @@ const ListingItem = ({
             <FaBath />
             <Divider orientation="vertical" />
             <Text>
-              {locale === "en" ? width * length : numInBurmese(width * length)}{" "}
-              {t("units.sqft")}
+              {locale === "en" ? area : numInBurmese(area)} {t("units.sqft")}
             </Text>
-            <BsGridFill />
+            <FaRulerCombined />
           </HStack>
         </Box>
-      </Flex>
+      </GridItem>
     </LocalizedLink>
   );
 };

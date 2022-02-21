@@ -2,23 +2,25 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { Avatar, Button, Flex, HStack, Divider } from "@chakra-ui/react";
+import { Avatar, Button, Flex, HStack, Divider, Grid } from "@chakra-ui/react";
 
 import Layout from "../components/layout";
 import Banner from "../components/banner";
 
 import { getSession } from "next-auth/react";
 import axios from "axios";
-import ListingItem from "../components/listingItem";
+import ListingItem from "../components/listing_item";
+
+const BASE_URL = process.env.BASE_URL;
 
 export async function getServerSideProps(ctx) {
   const { locale } = ctx;
 
   const forSale = await axios.get(
-    "http://localhost:3000/api/listings?purpose=sale"
+    `${BASE_URL}/api/listings?purpose=sale&limit=6`
   );
   const forRent = await axios.get(
-    "http://localhost:3000/api/listings?purpose=rent"
+    `${BASE_URL}/api/listings?purpose=rent&limit=6`
   );
   // console.log("forSale", forSale.data);
   // console.log("forRent", forRent.data);
@@ -27,18 +29,12 @@ export async function getServerSideProps(ctx) {
       forSaleListings: forSale.data,
       forRentListings: forRent.data,
       session: await getSession(ctx),
-      ...(await serverSideTranslations(locale, [
-        "home",
-        "common",
-        "new-listing",
-      ])),
+      ...(await serverSideTranslations(locale, ["home", "common", "listing"])),
     },
   };
 }
 export default function Home({ forSaleListings, forRentListings }) {
   const { t } = useTranslation("home");
-  console.log(forSaleListings);
-  console.log(forRentListings);
   return (
     <Layout title="Strawberries Space">
       <Banner
@@ -49,29 +45,39 @@ export default function Home({ forSaleListings, forRentListings }) {
         linkName="/search?purpose=rent"
         imageUrl="https://cdn.pixabay.com/photo/2021/11/08/00/30/bedroom-6778193_960_720.jpg"
       />
-      <HStack spacing={5} wrap={"wrap"} maxW={"7xl"} mx={"auto"} px={"auto"}>
+      <Grid
+        templateColumns={{ md: "repeat(2, 1fr)", xl: "repeat(3, 1fr)" }}
+        gap={5}
+        maxW={"7xl"}
+        mx={"auto"}
+      >
         {forSaleListings &&
           forSaleListings.map((listing) => (
             <ListingItem listing={listing} key={listing._id} />
           ))}
-      </HStack>
+      </Grid>
       <Divider my={10} />
       <Banner
         purpose={t("buy.purpose")}
         title={t("buy.title")}
         desc={t("buy.desc")}
         buttonText={t("buy.buttonText")}
-        linkName="/search?purpose=buy"
+        linkName="/search?purpose=sale"
         imageUrl="https://cdn.pixabay.com/photo/2017/01/07/17/48/interior-1961070_960_720.jpg"
         right={true}
       />
-      <HStack spacing={5} wrap={"wrap"} maxW={"7xl"} mx={"auto"} px={"auto"}>
+      <Grid
+        templateColumns={{ md: "repeat(2, 1fr)", xl: "repeat(3, 1fr)" }}
+        gap={5}
+        maxW={"7xl"}
+        mx={"auto"}
+      >
         {forRentListings &&
           forRentListings.map((listing) => (
             <ListingItem listing={listing} key={listing._id} />
           ))}
-      </HStack>
-      <Divider my={10} /> 
+      </Grid>
+      <Divider my={10} />
       <Banner
         purpose={t("sell.purpose")}
         title={t("sell.title")}

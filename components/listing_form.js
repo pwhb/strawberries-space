@@ -23,10 +23,10 @@ import { FaBath, FaBed, FaPhoneAlt } from "react-icons/fa";
 import { MdAddAPhoto } from "react-icons/md";
 
 import Dropzone from "react-dropzone";
-import jsonFile from "../public/locales/en/new-listing.json";
+import jsonFile from "../public/locales/en/listing.json";
 import { useState, useCallback, useRef } from "react";
 import { useTranslation } from "next-i18next";
-
+import { useRouter } from "next/router";
 // Components
 import ImagePopover from "./image_popover";
 import GradientButton from "./gradient_button";
@@ -35,7 +35,7 @@ import { capitalize } from "../lib/helpers";
 import { validateForm } from "../lib/validator";
 import axios from "axios";
 
-const ListingForm = () => {
+const ListingForm = ({ base_url }) => {
   const [photos, setPhotos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [phones, setPhones] = useState([""]);
@@ -65,9 +65,10 @@ const ListingForm = () => {
     lot_width: 0,
     lot_length: 0,
   });
-  const { t } = useTranslation("new-listing");
+  const { t } = useTranslation("listing");
 
   const toast = useToast();
+  const router = useRouter();
   const generateTitle = () => {
     const {
       location,
@@ -98,55 +99,36 @@ const ListingForm = () => {
     } else {
       try {
         setIsLoading(true);
-        const { data } = await axios.post("http://localhost:3000/api/upload", {
-          photos,
-        });
-        console.log("data", data);
+        const images = [];
+        if (photos[0]) {
+          const { data } = await axios.post(`${base_url}/api/upload`, {
+            photos,
+          });
+          //  data.map((image) => image.secure_url);
+          data.forEach((image) => images.push(image.secure_url));
+        }
 
-        const images = data.map((image) => image.secure_url);
-
-        const res = await axios.post("http://localhost:3000/api/listings", {
+        const res = await axios.post(`${base_url}/api/listings`, {
           ...formData,
           phones,
           images,
         });
         setIsLoading(false);
-        // setFormData({
-        //   added_by: "",
-        //   title: "",
-        //   description: "",
-        //   price: 0,
-        //   currency: "mmk",
-        //   purpose: "rent",
-        //   category: "",
-        //   bedrooms: 0,
-        //   bathrooms: 1,
-        //   floor_level: "",
-        //   floor_type: "",
-        //   lat: 0,
-        //   lng: 0,
-        //   home_no: "",
-        //   street: "",
-        //   township: "",
-        //   state: "yangon",
-        //   tags: [],
-        //   status: "",
-        //   width: 0,
-        //   length: 0,
-        //   lot_width: 0,
-        //   lot_length: 0,
-        // });
+
+        console.log(res.data.insertedId);
+
+        const docId = res.data.insertedId;
+        router.push(`/properties/${docId}`);
         toast({
           title: "Success",
-          description: "Successfully posted!",
+          description: "Successfully posted! \n Redirecting to your post ...",
           status: "success",
           isClosable: true,
         });
-        console.log(res);
       } catch (e) {
         toast({
           title: "Failed to post.",
-          description: "Sorry, something went wrong.",
+          description: "Sorry, your account might be logged out.",
           status: "error",
           isClosable: true,
         });
@@ -169,7 +151,7 @@ const ListingForm = () => {
         ...formData,
         [e.target.name]:
           e.target.type === "number"
-            ? parseInt(e.target.value)
+            ? parseFloat(e.target.value)
             : e.target.value,
       });
     }
@@ -289,7 +271,7 @@ const ListingForm = () => {
               </FormControl>
               {(formData.category === "apartment" ||
                 formData.category === "condo") && (
-                <FormControl isRequired w={"3xs"}>
+                <FormControl isRequired w={"3xs"} isInvalid={error.floor_level}>
                   <FormLabel>{t("form.floor_level")}</FormLabel>
                   <Select
                     name={"floor_level"}
@@ -379,7 +361,10 @@ const ListingForm = () => {
             </HStack>
             <HStack>
               <CustomInput
-                isRequired
+                isRequired={
+                  formData.category === "apartment" ||
+                  formData.category === "condo"
+                }
                 w={"auto"}
                 name={"width"}
                 label={t("form.width")}
@@ -390,7 +375,10 @@ const ListingForm = () => {
                 isInvalid={error.width}
               />
               <CustomInput
-                isRequired
+                isRequired={
+                  formData.category === "apartment" ||
+                  formData.category === "condo"
+                }
                 w={"auto"}
                 name={"length"}
                 label={t("form.length")}

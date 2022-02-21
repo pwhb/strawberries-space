@@ -106,7 +106,7 @@ const MenuButtonItem = () => {
         <LocalizedLink href="/search">
           <MenuItem icon={<FcSearch />}>{t("search")}</MenuItem>
         </LocalizedLink>
-        <LocalizedLink href="/search?purpose=buy">
+        <LocalizedLink href="/search?purpose=sale">
           <MenuItem icon={<FcUnlock />}>{t("buy")}</MenuItem>
         </LocalizedLink>
         <LocalizedLink href="/search?purpose=rent">
