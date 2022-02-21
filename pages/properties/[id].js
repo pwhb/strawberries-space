@@ -99,13 +99,14 @@ export default function PropertyDetails({ listing }) {
         <Stack
           mx={"auto"}
           maxW={"4xl"}
-          my={{ base: 10, md: 20 }}
+          my={20}
           spacing={5}
           boxShadow={"xl"}
-          px={{ base: 2, md: 10 }}
-          py={10}
+          p={{ base: 2, md: 10 }}
         >
-          <Text fontWeight={"bold"}>{title}</Text>
+          <Text fontWeight={"bold"} mt={5}>
+            {title}
+          </Text>
           <HStack spacing={{ base: 2, md: 5 }}>
             <Text as={"span"}>
               {category === "condo" || category === "apartment" ? (

@@ -31,41 +31,41 @@ const settings = {
 const Carousel = ({ images }) => {
   const [slider, setSlider] = useState(null);
   return (
-    <HStack mx={"auto"} justifyContent={"center"}>
-      <IconButton
-        icon={<BiLeftArrowAlt />}
-        // variant={"outline"}
-        colorScheme={"red"}
-        onClick={() => slider?.slickPrev()}
-      />
+    <Box
+      bg={useColorModeValue("pink.50", "gray.900")}
+      maxW={{ base: "full", md: "5xl" }}
+      mx={"auto"}
+      boxShadow={"lg"}
+      h={{ base: 300, md: 600 }}
+    >
+      {/* Slider */}
+      <Slider {...settings} ref={(slider) => setSlider(slider)}>
+        {images.map((url, idx) => (
+          <Image
+            key={idx}
+            alt={`photo-${idx}`}
+            src={url}
+            fit={"contain"}
+            maxH={{ base: 300, md: 600 }}
+          />
+        ))}
+      </Slider>
+      <HStack pt={10} justifyContent={"space-between"}>
+        <IconButton
+          icon={<BiLeftArrowAlt />}
+          // variant={"outline"}
+          colorScheme={"red"}
+          onClick={() => slider?.slickPrev()}
+        />
 
-      <Box
-        bg={useColorModeValue("pink.50", "gray.900")}
-        maxW={{ base: 250, md: "5xl" }}
-        mx={"auto"}
-        boxShadow={"lg"}
-        h={{ base: 300, md: 600 }}
-      >
-        {/* Slider */}
-        <Slider {...settings} ref={(slider) => setSlider(slider)}>
-          {images.map((url, idx) => (
-            <Image
-              key={idx}
-              alt={`photo-${idx}`}
-              src={url}
-              fit={"contain"}
-              maxH={{ base: 300, md: 600 }}
-            />
-          ))}
-        </Slider>
-      </Box>
-      <IconButton
-        icon={<BiRightArrowAlt />}
-        // variant={"outline"}
-        colorScheme={"red"}
-        onClick={() => slider?.slickNext()}
-      />
-    </HStack>
+        <IconButton
+          icon={<BiRightArrowAlt />}
+          // variant={"outline"}
+          colorScheme={"red"}
+          onClick={() => slider?.slickNext()}
+        />
+      </HStack>
+    </Box>
   );
 };
 
