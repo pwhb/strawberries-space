@@ -30,6 +30,7 @@ import {
   FaRulerCombined,
   FaPhoneAlt,
 } from "react-icons/fa";
+import { formatPrice } from "../../lib/formatters";
 import { BsGridFill } from "react-icons/bs";
 import Layout from "../../components/layout";
 import { numInBurmese } from "../../lib/formatters";
@@ -56,7 +57,7 @@ export default function PropertyDetails({ listing }) {
   const { t } = useTranslation("listing");
   const { data: session } = useSession();
   const { locale } = useRouter();
-  
+
   if (!listing) {
     return (
       <Layout title={"Not Found"}>
@@ -101,10 +102,11 @@ export default function PropertyDetails({ listing }) {
           my={{ base: 10, md: 20 }}
           spacing={5}
           boxShadow={"xl"}
-          p={10}
+          px={{ base: 2, md: 10 }}
+          py={10}
         >
           <Text fontWeight={"bold"}>{title}</Text>
-          <HStack spacing={5}>
+          <HStack spacing={{ base: 2, md: 5 }}>
             <Text as={"span"}>
               {category === "condo" || category === "apartment" ? (
                 <FaBuilding />
@@ -119,7 +121,7 @@ export default function PropertyDetails({ listing }) {
               {t(`purpose.${purpose}`).toUpperCase()}
             </Tag>{" "}
             <Text fontWeight={"bold"} color={"red.400"} as={"span"}>
-              {price} {t(`currency.${currency}`)}
+              {formatPrice(price, locale)} {t(`currency.${currency}`)}
             </Text>
           </HStack>
           <Text>

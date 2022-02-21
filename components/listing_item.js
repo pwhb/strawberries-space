@@ -20,9 +20,8 @@ import {
   FaRulerCombined,
 } from "react-icons/fa";
 import { useTranslation } from "next-i18next";
-import { numInBurmese } from "../lib/formatters";
+import { numInBurmese, formatPrice } from "../lib/formatters";
 import { LocalizedLink } from "../pages/index";
-import placeholder from "../public/images/placeholder.svg";
 const ListingItem = ({
   listing: {
     _id,
@@ -77,7 +76,8 @@ const ListingItem = ({
               {t(`purpose.${purpose}`).toUpperCase()}
             </Tag>{" "}
             <Text fontWeight={"bold"} color={"red.400"} as={"span"}>
-              {price.value} {t(`currency.${price.currency}`)}
+              {formatPrice(price.value, locale)}{" "}
+              {t(`currency.${price.currency}`)}
             </Text>
           </HStack>
 

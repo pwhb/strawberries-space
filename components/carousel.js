@@ -39,7 +39,7 @@ const Carousel = ({ images }) => {
 
       <Box
         bg={useColorModeValue("pink.50", "gray.900")}
-        maxW={"5xl"}
+        maxW={{ base: 250, md: "5xl" }}
         mx={"auto"}
         boxShadow={"lg"}
       >
