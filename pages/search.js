@@ -61,6 +61,7 @@ const Search = ({ listings }) => {
         maxW={"7xl"}
         mx={"auto"}
         mb={30}
+        justifyItems={"center"}
       >
         {listings &&
           listings.map((listing) => (

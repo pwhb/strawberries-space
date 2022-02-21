@@ -50,6 +50,7 @@ export default function Home({ forSaleListings, forRentListings }) {
         gap={5}
         maxW={"7xl"}
         mx={"auto"}
+        justifyItems={"center"}
       >
         {forSaleListings &&
           forSaleListings.map((listing) => (
@@ -71,6 +72,7 @@ export default function Home({ forSaleListings, forRentListings }) {
         gap={5}
         maxW={"7xl"}
         mx={"auto"}
+        justifyItems={"center"}
       >
         {forRentListings &&
           forRentListings.map((listing) => (

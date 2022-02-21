@@ -46,7 +46,7 @@ const ListingItem = ({
     <LocalizedLink href={`properties/${_id}`}>
       <GridItem
         as={"button"}
-        w={400}
+        w={{ base: 300, md: 400 }}
         direction={"column"}
         boxShadow={"lg"}
         bg={useColorModeValue("pink.50", "gray.900")}
