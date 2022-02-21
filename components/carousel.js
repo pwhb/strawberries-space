@@ -12,6 +12,8 @@ import {
 import { BiLeftArrowAlt, BiRightArrowAlt } from "react-icons/bi";
 // And react-slick as our Carousel Lib
 import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 // Settings for the slider
 const settings = {
@@ -42,23 +44,8 @@ const Carousel = ({ images }) => {
         maxW={{ base: 250, md: "5xl" }}
         mx={"auto"}
         boxShadow={"lg"}
+        h={{ base: 300, md: 600 }}
       >
-        {/* CSS files for react-slick */}
-        <link
-          rel="stylesheet"
-          type="text/css"
-          charSet="UTF-8"
-          href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css"
-        />
-        <link
-          rel="stylesheet"
-          type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
-        />
-        {/* Left Icon */}
-
-        {/* Right Icon */}
-
         {/* Slider */}
         <Slider {...settings} ref={(slider) => setSlider(slider)}>
           {images.map((url, idx) => (

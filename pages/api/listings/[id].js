@@ -6,8 +6,7 @@ const ListingsHandler = async (req, res) => {
   const { method } = req;
   const client = await clientPromise;
   const db = client.db("test_database");
-  //   const { ObjectId } = mongodb;
-  console.log(ObjectId);
+
   switch (method) {
     case "GET":
       const { id } = req.query;
@@ -31,8 +30,6 @@ const ListingsHandler = async (req, res) => {
           { $unwind: "$added_by" },
         ])
         .toArray();
-
-      console.log(docs);
 
       res.json(docs[0]);
       break;
