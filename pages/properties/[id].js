@@ -55,6 +55,8 @@ export async function getServerSideProps(ctx) {
 export default function PropertyDetails({ listing }) {
   const { t } = useTranslation("listing");
   const { data: session } = useSession();
+  const { locale } = useRouter();
+  
   if (!listing) {
     return (
       <Layout title={"Not Found"}>
@@ -86,7 +88,7 @@ export default function PropertyDetails({ listing }) {
     created_at,
     updated_at,
   } = listing;
-  const { locale } = useRouter();
+
   return (
     <Layout title={title}>
       <Box>
