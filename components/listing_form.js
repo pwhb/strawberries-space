@@ -21,6 +21,7 @@ import {
 // Icons
 import { FaBath, FaBed, FaPhoneAlt } from "react-icons/fa";
 import { MdAddAPhoto } from "react-icons/md";
+import { BsDoorOpenFill } from "react-icons/bs";
 
 import Dropzone from "react-dropzone";
 import jsonFile from "../public/locales/en/listing.json";
@@ -39,6 +40,7 @@ const ListingForm = ({ base_url }) => {
   const [photos, setPhotos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [phones, setPhones] = useState([""]);
+  const [rooms, setRooms] = useState([""]);
   const [error, setError] = useState({});
   const [formData, setFormData] = useState({
     added_by: "",
@@ -114,9 +116,6 @@ const ListingForm = ({ base_url }) => {
           images,
         });
         setIsLoading(false);
-
-        console.log(res.data.insertedId);
-
         const docId = res.data.insertedId;
         router.push(`/properties/${docId}`);
         toast({
@@ -203,7 +202,7 @@ const ListingForm = ({ base_url }) => {
         lineHeight={1.1}
         fontSize={{ base: "3xl", sm: "4xl", md: "5xl", lg: "6xl" }}
       >
-        {t("title")}
+        {t("create")}
       </Heading>
       <Stack
         bg={useColorModeValue("pink.50", "gray.900")}
@@ -259,14 +258,19 @@ const ListingForm = ({ base_url }) => {
                   onChange={(value) =>
                     setFormData({ ...formData, category: value })
                   }
+                  // flexWrap={"wrap"}
                 >
-                  <HStack spacing={10}>
+                  <Stack
+                    direction={"row"}
+                    spacing={{ base: 2, md: 10 }}
+                    wrap={"wrap"}
+                  >
                     {Object.keys(jsonFile.category).map((category, idx) => (
                       <Radio value={category} key={`${category}-${idx}`}>
                         {t(`category.${category}`)}
                       </Radio>
                     ))}
-                  </HStack>
+                  </Stack>
                 </RadioGroup>
               </FormControl>
               {(formData.category === "apartment" ||
@@ -331,8 +335,9 @@ const ListingForm = ({ base_url }) => {
                 </Select>
               </FormControl>
             </HStack>
-            <HStack alignItems={"end"}>
+            <HStack wrap={"wrap"} alignItems={"end"}>
               <CustomInput
+                maxW={"3xs"}
                 isRequired
                 w={"auto"}
                 name={"bedrooms"}
@@ -346,6 +351,7 @@ const ListingForm = ({ base_url }) => {
                 }
               />
               <CustomInput
+                maxW={"3xs"}
                 isRequired
                 w={"auto"}
                 name={"bathrooms"}
@@ -359,8 +365,9 @@ const ListingForm = ({ base_url }) => {
                 }
               />
             </HStack>
-            <HStack>
+            <HStack wrap={"wrap"}>
               <CustomInput
+                maxW={"3xs"}
                 isRequired={
                   formData.category === "apartment" ||
                   formData.category === "condo"
@@ -375,6 +382,7 @@ const ListingForm = ({ base_url }) => {
                 isInvalid={error.width}
               />
               <CustomInput
+                maxW={"3xs"}
                 isRequired={
                   formData.category === "apartment" ||
                   formData.category === "condo"
@@ -390,6 +398,7 @@ const ListingForm = ({ base_url }) => {
               />
 
               <CustomInput
+                maxW={"3xs"}
                 w={"auto"}
                 label={t("form.home")}
                 value={formData.length * formData.width}
@@ -398,8 +407,9 @@ const ListingForm = ({ base_url }) => {
               />
             </HStack>
             {(formData.category === "house" || formData.category === "lot") && (
-              <HStack>
+              <HStack wrap={"wrap"}>
                 <CustomInput
+                  maxW={"3xs"}
                   isRequired
                   w={"auto"}
                   name={"lot_width"}
@@ -411,6 +421,7 @@ const ListingForm = ({ base_url }) => {
                   isInvalid={error.lot_width}
                 />
                 <CustomInput
+                  maxW={"3xs"}
                   isRequired
                   w={"auto"}
                   name={"lot_length"}
@@ -422,6 +433,7 @@ const ListingForm = ({ base_url }) => {
                   isInvalid={error.lot_length}
                 />
                 <CustomInput
+                  maxW={"3xs"}
                   w={"auto"}
                   label={t("form.lot")}
                   value={formData.lot_length * formData.lot_width}
@@ -430,8 +442,9 @@ const ListingForm = ({ base_url }) => {
                 />
               </HStack>
             )}
-            <HStack>
+            <HStack wrap={"wrap"}>
               <CustomInput
+                maxW={"3xs"}
                 name={"home_no"}
                 label={
                   formData.category === "apartment" ||
@@ -443,14 +456,15 @@ const ListingForm = ({ base_url }) => {
                 onChange={onChange}
               />
               <CustomInput
+                maxW={"3xs"}
                 name={"street"}
                 label={t("form.street")}
                 value={formData.street}
                 onChange={onChange}
               />
             </HStack>
-            <HStack>
-              <FormControl isRequired isInvalid={error.township}>
+            <HStack wrap={"wrap"}>
+              <FormControl maxW={"3xs"} isRequired isInvalid={error.township}>
                 <FormLabel>{t("form.township")}</FormLabel>
                 <Select
                   name={"township"}
@@ -466,16 +480,16 @@ const ListingForm = ({ base_url }) => {
                   )}
                 </Select>
               </FormControl>
-              <FormControl isRequired>
+              <FormControl maxW={"3xs"} isRequired>
                 <FormLabel>{t("form.state")}</FormLabel>
                 <Select
                   name={"state"}
                   value={formData.state}
                   onChange={onChange}
                 >
-                  {Object.keys(jsonFile.states).map((state, idx) => (
+                  {Object.keys(jsonFile.state).map((state, idx) => (
                     <option value={state} key={`${state}-${idx}`}>
-                      {t(`states.${state}`)}
+                      {t(`state.${state}`)}
                     </option>
                   ))}
                 </Select>
@@ -507,56 +521,33 @@ const ListingForm = ({ base_url }) => {
                 buttonText={t("form.auto-fill")}
                 onClick={getCurrentLocation}
               />
-              <GradientButton
-                buttonText={t("form.google-map")}
-                href={
-                  formData.lat && formData.lng
-                    ? `https://www.google.com/maps/place/${formData.lat},${formData.lng}`
-                    : "https://www.google.com/maps"
-                }
-                isExternal
-              />
             </HStack>
-            <FormControl isRequired>
-              <FormLabel>{t("form.phone_number")}</FormLabel>
-              <VStack spacing={3} alignItems={"start"}>
-                {phones.map((phone, idx) => (
-                  <HStack key={`phone-${idx}`}>
-                    <CustomInput
-                      value={phone}
-                      isInvalid={error.phone_numbers}
-                      onChange={(e) => {
-                        setPhones(
-                          phones.map((ph, i) =>
-                            i === idx ? e.target.value : ph
-                          )
-                        );
-                      }}
-                      icon={<FaPhoneAlt />}
-                      type={"number"}
-                      isRequired={idx === 0}
-                    />
-                    {idx === 0 ? (
-                      <Button
-                        variant={"outline"}
-                        onClick={() => setPhones((prev) => prev.concat(""))}
-                      >
-                        +
-                      </Button>
-                    ) : (
-                      <Button
-                        variant={"outline"}
-                        onClick={() =>
-                          setPhones((prev) => prev.filter((v, i) => i !== idx))
-                        }
-                      >
-                        -
-                      </Button>
-                    )}
-                  </HStack>
-                ))}
-              </VStack>
-            </FormControl>
+            <GradientButton
+              buttonText={t("form.google-map")}
+              href={
+                formData.lat && formData.lng
+                  ? `https://www.google.com/maps/place/${formData.lat},${formData.lng}`
+                  : "https://www.google.com/maps"
+              }
+              isExternal
+              w={"auto"}
+              maxW={"xs"}
+            />
+
+            <ListForm
+              isRequired
+              arr={phones}
+              setArr={setPhones}
+              label={t("form.phones")}
+              isInvalid={error.phone_numbers}
+              icon={<FaPhoneAlt />}
+            />
+            <ListForm
+              arr={rooms}
+              setArr={setRooms}
+              label={rooms.length > 1 ? t("form.rooms") : t("form.room")}
+              icon={<BsDoorOpenFill />}
+            />
 
             {photos && (
               <Flex direction={"row"} wrap={"wrap"}>
@@ -628,4 +619,48 @@ const ListingForm = ({ base_url }) => {
   );
 };
 
+const ListForm = ({ arr, setArr, label, icon, isInvalid, isRequired }) => {
+  return (
+    <FormControl isRequired={isRequired}>
+      <FormLabel>{label}</FormLabel>
+      <VStack spacing={3} alignItems={"start"}>
+        {arr.map((item, idx) => (
+          <HStack key={`item-${idx}`}>
+            <CustomInput
+              value={item}
+              isInvalid={isInvalid}
+              onChange={(e) => {
+                setArr(
+                  arr.map((prevVal, i) =>
+                    i === idx ? e.target.value : prevVal
+                  )
+                );
+              }}
+              icon={icon}
+              type={"number"}
+              isRequired={idx === 0}
+            />
+            {idx === 0 ? (
+              <Button
+                variant={"outline"}
+                onClick={() => setArr((prev) => prev.concat(""))}
+              >
+                +
+              </Button>
+            ) : (
+              <Button
+                variant={"outline"}
+                onClick={() =>
+                  setArr((prev) => prev.filter((v, i) => i !== idx))
+                }
+              >
+                -
+              </Button>
+            )}
+          </HStack>
+        ))}
+      </VStack>
+    </FormControl>
+  );
+};
 export default ListingForm;

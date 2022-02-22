@@ -19,6 +19,7 @@ const CustomInput = ({
   icon,
   w,
   minW,
+  maxW,
   textarea = false,
   step,
   min,
@@ -33,6 +34,7 @@ const CustomInput = ({
       isRequired={isRequired}
       w={w}
       minW={minW}
+      maxW={maxW}
       isInvalid={isInvalid}
     >
       {label && <FormLabel>{label}</FormLabel>}

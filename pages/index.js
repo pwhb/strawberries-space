@@ -2,7 +2,15 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { Avatar, Button, Flex, HStack, Divider, Grid } from "@chakra-ui/react";
+import {
+  Avatar,
+  Button,
+  Flex,
+  HStack,
+  Divider,
+  Grid,
+  SimpleGrid,
+} from "@chakra-ui/react";
 
 import Layout from "../components/layout";
 import Banner from "../components/banner";
@@ -45,18 +53,16 @@ export default function Home({ forSaleListings, forRentListings }) {
         linkName="/search?purpose=rent"
         imageUrl="https://cdn.pixabay.com/photo/2021/11/08/00/30/bedroom-6778193_960_720.jpg"
       />
-      <Grid
-        templateColumns={{ md: "repeat(2, 1fr)", xl: "repeat(3, 1fr)" }}
+      <SimpleGrid
+        columns={{ base: 1, lg: 2, xl: 3 }}
         gap={5}
-        maxW={"7xl"}
-        mx={"auto"}
         justifyItems={"center"}
       >
         {forSaleListings &&
           forSaleListings.map((listing) => (
             <ListingItem listing={listing} key={listing._id} />
           ))}
-      </Grid>
+      </SimpleGrid>
       <Divider my={10} />
       <Banner
         purpose={t("buy.purpose")}
@@ -67,18 +73,16 @@ export default function Home({ forSaleListings, forRentListings }) {
         imageUrl="https://cdn.pixabay.com/photo/2017/01/07/17/48/interior-1961070_960_720.jpg"
         right={true}
       />
-      <Grid
-        templateColumns={{ md: "repeat(2, 1fr)", xl: "repeat(3, 1fr)" }}
+      <SimpleGrid
+        columns={{ base: 1, lg: 2, xl: 3 }}
         gap={5}
-        maxW={"7xl"}
-        mx={"auto"}
         justifyItems={"center"}
       >
         {forRentListings &&
           forRentListings.map((listing) => (
             <ListingItem listing={listing} key={listing._id} />
           ))}
-      </Grid>
+      </SimpleGrid>
       <Divider my={10} />
       <Banner
         purpose={t("sell.purpose")}

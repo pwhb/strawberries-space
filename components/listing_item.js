@@ -42,24 +42,24 @@ const ListingItem = ({
   const { locale } = useRouter();
   const area = lot_width ? lot_width * lot_length : width * length;
   return (
-    <LocalizedLink href={`properties/${_id}`}>
-      <GridItem
-        as={"button"}
-        w={{ base: 300, md: 400 }}
-        direction={"column"}
-        boxShadow={"lg"}
-        bg={useColorModeValue("pink.50", "gray.900")}
-        p={3}
-        // justifyItems={"center"}
-      >
-        <Image
-          src={images[0] ? images[0] : "/images/placeholder.svg"}
-          alt={title}
-          w={400}
-          objectFit={"contain"}
-          h={240}
-        />
+    <GridItem
+      as={"button"}
+      w={{ base: "auto", md: 400 }}
+      direction={"column"}
+      boxShadow={"lg"}
+      bg={useColorModeValue("pink.50", "gray.900")}
+      p={3}
+      // justifyItems={"center"}
+    >
+      <LocalizedLink href={`/properties/${_id}`}>
         <Box align={"center"} w={"full"}>
+          <Image
+            src={images[0] ? images[0] : "/images/placeholder.svg"}
+            alt={title}
+            w={400}
+            objectFit={"contain"}
+            h={240}
+          />
           <Text fontWeight={"semibold"} my={3}>
             {title.length > 48 ? title.substring(0, 48) + "..." : title}
           </Text>
@@ -100,8 +100,8 @@ const ListingItem = ({
             <FaRulerCombined />
           </HStack>
         </Box>
-      </GridItem>
-    </LocalizedLink>
+      </LocalizedLink>
+    </GridItem>
   );
 };
 

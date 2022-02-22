@@ -1,5 +1,6 @@
 {
-    "title": "Create New Listing",
+    "create": "Create New Listing",
+    "edit": "Edit Your Listing",
     "subtitle": "Showcase your property",
     "category": {
         "apartment": "Apartment",
@@ -10,6 +11,48 @@
     "purpose": {
         "rent": "For rent",
         "sale": "For sale"
+    },
+    "max-price": {
+        "name": "Maximum Price",
+        "rent": {
+            "1": "Under 1 Lakhs",
+            "2": "Under 2 Lakhs",
+            "3": "Under 3 Lakhs",
+            "5": "Under 5 Lakhs",
+            "10": "Under 10 Lakhs",
+            "20": "Under 20 Lakhs"
+        },
+        "sale": {
+            "100": "Under 100 Lakhs",
+            "200": "Under 200 Lakhs",
+            "400": "Under 400 Lakhs",
+            "500": "Under 500 Lakhs",
+            "800": "Under 800 Lakhs",
+            "1000": "Under 1000 Lakhs",
+            "2000": "Under 2000 Lakhs",
+            "5000": "Under 5000 Lakhs"
+        }
+    },
+    "min-price": {
+        "name": "Minimum Price",
+        "rent": {
+            "1": "Over 1 Lakhs",
+            "2": "Over 2 Lakhs",
+            "3": "Over 3 Lakhs",
+            "5": "Over 5 Lakhs",
+            "10": "Over 10 Lakhs",
+            "20": "Over 20 Lakhs"
+        },
+        "sale": {
+            "100": "Over 100 Lakhs",
+            "200": "Over 200 Lakhs",
+            "400": "Over 400 Lakhs",
+            "500": "Over 500 Lakhs",
+            "800": "Over 800 Lakhs",
+            "1000": "Over 1000 Lakhs",
+            "2000": "Over 2000 Lakhs",
+            "5000": "Over 5000 Lakhs"
+        }
     },
     "currency": {
         "mmk": "MMK",
@@ -58,7 +101,9 @@
         "floor_level": "Floor Level",
         "floor_type": "Floor Type",
         "photos": "Add Photos",
-        "phone_number": "Phone Number",
+        "phones": "Phone Number",
+        "room": "Room",
+        "rooms": "Rooms",
         "lat": "Latitude",
         "lng": "Longitude",
         "home_no": "Lot No.",
@@ -75,7 +120,7 @@
         "lot_width": "Lot Width",
         "lot_length": "Lot Length"
     },
-    "states": {
+    "state": {
         "ayeyarwaddy": "Ayeyarwady Region",
         "bago": "Bago Region",
         "chin": "Chin State",

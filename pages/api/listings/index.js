@@ -8,11 +8,34 @@ const ListingsHandler = async (req, res) => {
 
   switch (method) {
     case "GET":
-      const { purpose, limit } = req.query;
+      const { title, purpose, category, min, max, township, state, limit } =
+        req.query;
+      console.log("listing query", req.query);
       const query = {};
+      if (title) {
+        query.title = new RegExp(title);
+        // query.description = `/${title}/`;
+      }
       if (purpose) {
         query.purpose = purpose;
       }
+      if (category) {
+        query.category = category;
+      }
+      if (township) {
+        query["address.township"] = township;
+      }
+      if (state) {
+        query["address.state"] = state;
+      }
+      if (min) {
+        query["price.value"] = { $gt: min * 100000 };
+      }
+      if (max) {
+        query["price.value"] = { ...query["price.value"], $lt: max * 100000 };
+      }
+
+      console.log("query", query);
       const docs = await db
         .collection("listings")
         .find(query)

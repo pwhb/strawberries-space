@@ -9,6 +9,7 @@ const GradientButton = ({
   isExternal,
   w,
   minW,
+  maxW,
   mt,
   mx,
   my,
@@ -26,6 +27,7 @@ const GradientButton = ({
       }}
       w={w}
       minW={minW ? minW : "auto"}
+      maxW={maxW}
       onClick={onClick}
       mt={mt}
       mx={mx}
