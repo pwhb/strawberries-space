@@ -35,6 +35,7 @@ import CustomInput from "./custom_input";
 import { capitalize } from "../lib/helpers";
 import { validateForm } from "../lib/validator";
 import axios from "axios";
+import { formatPrice } from "../lib/formatters";
 
 const ListingForm = ({ base_url }) => {
   const [photos, setPhotos] = useState([]);
@@ -71,6 +72,7 @@ const ListingForm = ({ base_url }) => {
 
   const toast = useToast();
   const router = useRouter();
+  const { locale } = router;
   const generateTitle = () => {
     const {
       location,
@@ -148,10 +150,7 @@ const ListingForm = ({ base_url }) => {
     } else {
       setFormData({
         ...formData,
-        [e.target.name]:
-          e.target.type === "number"
-            ? parseFloat(e.target.value)
-            : e.target.value,
+        [e.target.name]: e.target.value,
       });
     }
   };
@@ -194,6 +193,7 @@ const ListingForm = ({ base_url }) => {
   const onChangeInputFiles = (e) => {
     handleFiles(Array.from(e.target.files));
   };
+
 
   const fileInput = useRef();
   return (
@@ -291,7 +291,7 @@ const ListingForm = ({ base_url }) => {
                 </FormControl>
               )}
             </HStack>
-            <HStack wrap={"wrap"}>
+            <HStack wrap={"wrap"} alignItems={"end"}>
               <FormControl w={"auto"} isRequired>
                 <FormLabel>{t("form.purpose")}</FormLabel>
                 <Select
@@ -306,6 +306,18 @@ const ListingForm = ({ base_url }) => {
                   ))}
                 </Select>
               </FormControl>
+              <Text
+                fontWeight={"semibold"}
+                bg={useColorModeValue("blue.300","blue.600")}
+                p={2}
+                rounded={"lg"}
+                boxShadow={"lg"}
+                color={"white"}
+              >
+                {" "}
+                {formatPrice(formData.price, locale)}{" "}
+                {t(`currency.${formData.currency}`)}
+              </Text>
               <CustomInput
                 name={"price"}
                 label={t("form.price")}
@@ -314,8 +326,8 @@ const ListingForm = ({ base_url }) => {
                 value={formData.price}
                 onChange={onChange}
                 type={"number"}
-                step={formData.purpose === "sell" ? 100000 : 1000}
-                min={formData.purpose === "sell" ? 1000000 : 100000}
+                step={formData.purpose === "sale" ? 100000 : 1000}
+                min={formData.purpose === "sale" ? 1000000 : 100000}
                 rightAddon={
                   formData.currency === "mmk"
                     ? t("currency.mmk")
@@ -335,6 +347,7 @@ const ListingForm = ({ base_url }) => {
                 </Select>
               </FormControl>
             </HStack>
+
             <HStack wrap={"wrap"} alignItems={"end"}>
               <CustomInput
                 maxW={"3xs"}
@@ -540,6 +553,7 @@ const ListingForm = ({ base_url }) => {
               setArr={setPhones}
               label={t("form.phones")}
               isInvalid={error.phone_numbers}
+              type={"number"}
               icon={<FaPhoneAlt />}
             />
             <ListForm
@@ -619,7 +633,15 @@ const ListingForm = ({ base_url }) => {
   );
 };
 
-const ListForm = ({ arr, setArr, label, icon, isInvalid, isRequired }) => {
+const ListForm = ({
+  arr,
+  setArr,
+  label,
+  icon,
+  isInvalid,
+  isRequired,
+  type,
+}) => {
   return (
     <FormControl isRequired={isRequired}>
       <FormLabel>{label}</FormLabel>
@@ -637,7 +659,7 @@ const ListForm = ({ arr, setArr, label, icon, isInvalid, isRequired }) => {
                 );
               }}
               icon={icon}
-              type={"number"}
+              type={type}
               isRequired={idx === 0}
             />
             {idx === 0 ? (

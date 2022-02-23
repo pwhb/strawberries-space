@@ -95,7 +95,7 @@ const PropertyDetails = ({
         <Text>
           {home_no ? home_no + ", " : ""}
           {street ? street + ", " : ""} {t(`${state}.${township}`)},{" "}
-          {t(`states.${state}`)}
+          {t(`state.${state}`)}
         </Text>
         <Text fontSize={"xs"}>{formatDate(created_at, locale)}</Text>
         <Divider />
