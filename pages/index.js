@@ -44,7 +44,7 @@ export async function getServerSideProps(ctx) {
 export default function Home({ forSaleListings, forRentListings }) {
   const { t } = useTranslation("home");
   return (
-    <Layout title="Strawberries Space">
+    <Layout title="Strawberry Space">
       <Banner
         purpose={t("rent.purpose")}
         title={t("rent.title")}

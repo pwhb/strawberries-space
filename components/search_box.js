@@ -16,66 +16,53 @@ import { useEffect, useState } from "react";
 import { FcSearch } from "react-icons/fc";
 import jsonFile from "../public/locales/en/listing.json";
 import { useTranslation } from "next-i18next";
+import useSearch from "./useSearch";
 
-const SearchBox = ({ fetchData }) => {
-  const [title, setTitle] = useState("");
-  const [query, setQuery] = useState({
-    // title: "",
-    min: "any",
-    max: "any",
-    purpose: "any",
-    category: "any",
-    // bedrooms: 0,
-    // bathrooms: 1,
-    // floor_level: "",
-    // floor_type: "",
-    // lat: 0,
-    // lng: 0,
-    // home_no: "",
-    // street: "",
-    township: "any",
-    state: "any",
-    // tags: [],
-    // status: "",
-    // width: 0,
-    // length: 0,
-    // lot_width: 0,
-    // lot_length: 0,
-  });
+const SearchBox = ({ setListings }) => {
+  // const [title, setTitle] = useState("");
+  // const [filters, setQuery] = useState({
+  //   // title: "",
+  //   min: "any",
+  //   max: "any",
+  //   purpose: initialPurpose ? initialPurpose : "any",
+  //   category: "any",
+  //   // bedrooms: 0,
+  //   // bathrooms: 1,
+  //   // floor_level: "",
+  //   // floor_type: "",
+  //   // lat: 0,
+  //   // lng: 0,
+  //   // home_no: "",
+  //   // street: "",
+  //   township: "any",
+  //   state: "any",
+  //   // tags: [],
+  //   // status: "",
+  //   // width: 0,
+  //   // length: 0,
+  //   // lot_width: 0,
+  //   // lot_length: 0,
+  // });
   const { t } = useTranslation("listing");
 
-  const onChange = (e) => {
-    setQuery({ ...query, [e.target.name]: e.target.value });
-  };
-  const onTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
+  const { filters, onChange } = useSearch({ setListings });
 
-  useEffect(() => {
-    fetchData({ ...query, title });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, query]);
-
-  //   useEffect(() => {
-  //     console.log(query);
-  //     fetchData(query);
-  //   }, [query]);
-  const filters = [
+  const filterList = [
     {
       name: "min",
       label: t("min-price.name"),
       options:
-        query.purpose === "any"
+        filters.purpose === "any"
           ? Object.keys(jsonFile["min-price"]["rent"])
-          : Object.keys(jsonFile["min-price"][query.purpose]),
+          : Object.keys(jsonFile["min-price"][filters.purpose]),
     },
     {
       name: "max",
       label: t("max-price.name"),
       options:
-        query.purpose === "any"
+        filters.purpose === "any"
           ? Object.keys(jsonFile["max-price"]["rent"])
-          : Object.keys(jsonFile["max-price"][query.purpose]),
+          : Object.keys(jsonFile["max-price"][filters.purpose]),
     },
     {
       name: "purpose",
@@ -97,9 +84,9 @@ const SearchBox = ({ fetchData }) => {
       name: "township",
       label: t("form.township"),
       options:
-        query.state === "any"
+        filters.state === "any"
           ? Object.keys(jsonFile.yangon)
-          : Object.keys(jsonFile[query.state]),
+          : Object.keys(jsonFile[filters.state]),
     },
   ];
   return (
@@ -115,34 +102,42 @@ const SearchBox = ({ fetchData }) => {
         <InputLeftElement>
           <FcSearch />
         </InputLeftElement>
-        <Input placeholder="Search" value={title} onChange={onTitleChange} />
+        <Input
+          placeholder="Search"
+          name={"title"}
+          value={filters.title}
+          onChange={onChange}
+        />
       </InputGroup>
       <SimpleGrid columns={{ base: 2, lg: 3 }} gap={5} justifyItems={"center"}>
-        {filters.map((filter, idx) => (
+        {filterList.map((filter, idx) => (
           <GridItem key={`filter-${idx}`} w={"full"}>
             <FormControl>
               <FormLabel>{filter.label}</FormLabel>
               <Select
                 name={filter.name}
-                value={query[filter.name]}
+                value={filters[filter.name]}
                 onChange={onChange}
               >
                 <option value={"any"}>Any</option>
                 {filter.options.map((option, idx) => {
                   let optionName;
                   switch (filter.name) {
+                    case "purpose":
+                      optionName = `search-purpose.${option}`;
+                      break;
                     case "township":
                       optionName =
-                        query.state === "any"
+                        filters.state === "any"
                           ? `yangon.${option}`
-                          : `${query.state}.${option}`;
+                          : `${filters.state}.${option}`;
                       break;
                     case "min":
                     case "max":
                       optionName =
-                        query.purpose === "any"
+                        filters.purpose === "any"
                           ? `${filter.name}-price.rent.${option}`
-                          : `${filter.name}-price.${query.purpose}.${option}`;
+                          : `${filter.name}-price.${filters.purpose}.${option}`;
                       break;
                     default:
                       optionName = `${filter.name}.${option}`;

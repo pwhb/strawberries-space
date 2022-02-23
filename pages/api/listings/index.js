@@ -10,7 +10,6 @@ const ListingsHandler = async (req, res) => {
     case "GET":
       const { title, purpose, category, min, max, township, state, limit } =
         req.query;
-      console.log("listing query", req.query);
       const query = {};
       if (title) {
         query.title = new RegExp(title);
@@ -35,13 +34,13 @@ const ListingsHandler = async (req, res) => {
         query["price.value"] = { ...query["price.value"], $lt: max * 100000 };
       }
 
-      console.log("query", query);
+      // console.log("query", query);
       const docs = await db
         .collection("listings")
         .find(query)
         .limit(limit ? parseInt(limit) : 40)
         .toArray();
-      // console.log(docs);
+
       res.json(docs);
       break;
     case "POST":
@@ -113,7 +112,7 @@ const ListingsHandler = async (req, res) => {
           created_at: new Date(),
           updated_at: new Date(),
         });
-        console.log(doc);
+
         res.status(200).json(doc);
       } catch (e) {
         console.log(e);

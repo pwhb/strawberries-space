@@ -12,6 +12,10 @@
         "rent": "For rent",
         "sale": "For sale"
     },
+    "search-purpose": {
+        "rent": "To rent",
+        "sale": "To buy"
+    },
     "max-price": {
         "name": "Maximum Price",
         "rent": {
